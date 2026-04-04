@@ -149,7 +149,7 @@
       letter-spacing: -.03em;
       line-height: 1;
       margin-bottom: 1.5rem;
-      animation: fadeSlideUp 1s .3s ease both;
+      animation: fadeSlideUp 1s .55s ease both;
     }
 
     .word-coming {
@@ -185,6 +185,36 @@
     @keyframes shimmer {
       0%   { background-position: -200% 0; }
       100% { background-position:  200% 0; }
+    }
+
+    /* ─────────────────────────────────────────────
+       Quote block
+    ───────────────────────────────────────────── */
+    .quote {
+      max-width: 580px;
+      margin-bottom: 2.8rem;
+      animation: fadeSlideUp 1s .3s ease both;
+    }
+
+    .quote-text {
+      font-size: clamp(1.05rem, 2.8vw, 1.45rem);
+      font-style: italic;
+      font-weight: 300;
+      line-height: 1.7;
+      background: linear-gradient(135deg, #fff 30%, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: .65rem;
+    }
+
+    .quote-attr {
+      display: block;
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      color: rgba(168,85,247,.7);
     }
 
     /* ─────────────────────────────────────────────
@@ -262,6 +292,11 @@
       <span class="badge-dot"></span>
       Caestus Labs
     </div>
+
+    <blockquote class="quote">
+      <p class="quote-text">"Reality is that which, when you stop believing in it, doesn't go away."</p>
+      <cite class="quote-attr">— Philip K. Dick</cite>
+    </blockquote>
 
     <h1>
       <span class="word-coming">Coming</span>
