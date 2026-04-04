@@ -498,9 +498,8 @@
 
     /* ── Countdown timer ────────────────────────── */
     (function () {
-      // Launch date: 60 days from page load (adjust as needed)
-      const launch = new Date();
-      launch.setDate(launch.getDate() + 60);
+      // Fixed launch date — update this when you have a real target
+      const launch = new Date('2026-06-03T00:00:00');
 
       const elDays  = document.getElementById('cd-days');
       const elHours = document.getElementById('cd-hours');
@@ -514,7 +513,7 @@
         if (el.textContent !== padded) {
           el.textContent = padded;
           el.classList.remove('flip');
-          void el.offsetWidth; // reflow
+          void el.offsetWidth; // force reflow to restart CSS animation
           el.classList.add('flip');
         }
       }
@@ -543,6 +542,9 @@
     /* ── Notify form ────────────────────────────── */
     document.getElementById('notify-form').addEventListener('submit', function (e) {
       e.preventDefault();
+      const email = document.getElementById('notify-email').value;
+      // TODO: wire up to a backend / mailing-list service to capture email
+      console.log('Notify request from:', email);
       this.style.display = 'none';
       document.getElementById('success-msg').style.display = 'block';
     });
