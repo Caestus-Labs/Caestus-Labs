@@ -402,10 +402,10 @@
       <span class="word-soon">Soon</span>
     </h1>
 
-    <p class="subtitle">
+    <!-- <p class="subtitle">
       We're building something extraordinary. A new era of innovation is on the horizon —
       sign up to be the first to know.
-    </p>
+    </p> -->
 
     <!-- Countdown -->
     <div class="countdown">
@@ -497,7 +497,7 @@
     })();
 
     /* ── Countdown timer ────────────────────────── */
-    (function () {
+    /* (function () {
       // Fixed launch date — update this when you have a real target
       const launch = new Date('2026-06-03T00:00:00');
 
@@ -537,12 +537,12 @@
 
       tick();
       setInterval(tick, 1000);
-    })();
+    })(); */
 
     /* ── Notify form ────────────────────────────── */
     document.getElementById('notify-form').addEventListener('submit', function (e) {
       e.preventDefault();
-      const email = document.getElementById('notify-email').value;
+      // const email = document.getElementById('notify-email').value;
       // TODO: wire up to a backend / mailing-list service to capture email
       console.log('Notify request from:', email);
       this.style.display = 'none';
