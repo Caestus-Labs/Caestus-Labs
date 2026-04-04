@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Caestus Labs — Coming Soon</title>
+  <style>
+    /* ─────────────────────────────────────────────
+       Reset & base
+    ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #7c3aed;
+      --accent2: #06b6d4;
+      --glow: #a855f7;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #000;
+      color: #fff;
+    }
+
+    /* ─────────────────────────────────────────────
+       Star-field canvas
+    ───────────────────────────────────────────── */
+    #stars-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    /* ─────────────────────────────────────────────
+       Nebula / radial gradient overlay
+    ───────────────────────────────────────────── */
+    .nebula {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 40%, rgba(124,58,237,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 80% 60%, rgba(6,182,212,.14) 0%, transparent 70%);
+      animation: nebulaDrift 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes nebulaDrift {
+      from { transform: scale(1)   translateX(0);   }
+      to   { transform: scale(1.08) translateX(2%); }
+    }
+
+    /* ─────────────────────────────────────────────
+       Floating orbs
+    ───────────────────────────────────────────── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: .35;
+      z-index: 2;
+      animation: orbFloat linear infinite;
+    }
+    .orb1 { width:420px; height:420px; background:var(--accent);  top:-120px; left:-100px; animation-duration:18s; }
+    .orb2 { width:320px; height:320px; background:var(--accent2); bottom:-80px; right:-60px; animation-duration:14s; animation-delay:-7s; }
+    .orb3 { width:260px; height:260px; background:#ec4899;         top:40%; left:55%; animation-duration:22s; animation-delay:-4s; }
+
+    @keyframes orbFloat {
+      0%,100% { transform: translate(0,0)     rotate(0deg);   }
+      25%      { transform: translate(30px,-40px) rotate(90deg);  }
+      50%      { transform: translate(-20px,50px) rotate(180deg); }
+      75%      { transform: translate(40px,20px)  rotate(270deg); }
+    }
+
+    /* ─────────────────────────────────────────────
+       Grid lines overlay
+    ───────────────────────────────────────────── */
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 3;
+      background-image:
+        linear-gradient(rgba(124,58,237,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,58,237,.06) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridPulse 8s ease-in-out infinite;
+    }
+
+    @keyframes gridPulse {
+      0%,100% { opacity:.6; }
+      50%     { opacity:1; }
+    }
+
+    /* ─────────────────────────────────────────────
+       Main content wrapper
+    ───────────────────────────────────────────── */
+    .wrapper {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* ─────────────────────────────────────────────
+       Logo / badge
+    ───────────────────────────────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .4rem 1.1rem;
+      border: 1px solid rgba(168,85,247,.4);
+      border-radius: 999px;
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #c084fc;
+      background: rgba(124,58,237,.12);
+      backdrop-filter: blur(8px);
+      margin-bottom: 2rem;
+      animation: fadeSlideDown .8s ease both;
+    }
+
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #a855f7;
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+      0%,100% { box-shadow: 0 0 0 0 rgba(168,85,247,.7); }
+      50%     { box-shadow: 0 0 0 6px rgba(168,85,247,0); }
+    }
+
+    /* ─────────────────────────────────────────────
+       Headline
+    ───────────────────────────────────────────── */
+    h1 {
+      font-size: clamp(3rem, 10vw, 7.5rem);
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      animation: fadeSlideUp 1s .3s ease both;
+    }
+
+    .word-coming {
+      display: block;
+      background: linear-gradient(135deg, #fff 30%, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .word-soon {
+      display: block;
+      background: linear-gradient(135deg, var(--accent2) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+    }
+
+    /* shimmer sweep on "Soon" */
+    .word-soon::after {
+      content: 'Soon';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,.55) 50%, transparent 65%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200% 100%;
+      animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position:  200% 0; }
+    }
+
+    /* ─────────────────────────────────────────────
+       Subtitle
+    ───────────────────────────────────────────── */
+    .subtitle {
+      max-width: 480px;
+      font-size: clamp(.95rem, 2.5vw, 1.15rem);
+      line-height: 1.7;
+      color: rgba(255,255,255,.55);
+      margin-bottom: 2.8rem;
+      animation: fadeSlideUp 1s .55s ease both;
+    }
+
+    /* ─────────────────────────────────────────────
+       Countdown
+    ───────────────────────────────────────────── */
+    .countdown {
+      display: flex;
+      gap: clamp(.8rem, 3vw, 2rem);
+      margin-bottom: 3rem;
+      animation: fadeSlideUp 1s .75s ease both;
+    }
+
+    .cd-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .35rem;
+      min-width: 72px;
+    }
+
+    .cd-value {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      line-height: 1;
+      position: relative;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(168,85,247,.25);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+      transition: transform .1s;
+    }
+
+    .cd-value::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .cd-label {
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.35);
+    }
+
+    /* flip animation class added via JS */
+    .cd-value.flip { animation: cdFlip .35s ease; }
+
+    @keyframes cdFlip {
+      0%  { transform: rotateX(90deg); opacity: 0; }
+      100%{ transform: rotateX(0);    opacity: 1; }
+    }
+
+    /* ─────────────────────────────────────────────
+       Notify form
+    ───────────────────────────────────────────── */
+    .notify-form {
+      display: flex;
+      gap: .6rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeSlideUp 1s .95s ease both;
+    }
+
+    .notify-input {
+      padding: .75rem 1.2rem;
+      border-radius: 12px;
+      border: 1px solid rgba(168,85,247,.3);
+      background: rgba(255,255,255,.05);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      font-size: .95rem;
+      width: 260px;
+      outline: none;
+      transition: border-color .25s, box-shadow .25s;
+    }
+
+    .notify-input::placeholder { color: rgba(255,255,255,.3); }
+
+    .notify-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(124,58,237,.25);
+    }
+
+    .notify-btn {
+      padding: .75rem 1.6rem;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-size: .95rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--accent), #6d28d9);
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+      transition: transform .15s, box-shadow .25s;
+      box-shadow: 0 0 20px rgba(124,58,237,.45);
+    }
+
+    .notify-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.2) 50%, transparent 70%);
+      background-size: 200% 100%;
+      animation: btnShimmer 2.5s ease-in-out infinite;
+    }
+
+    @keyframes btnShimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position:  200% 0; }
+    }
+
+    .notify-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 36px rgba(124,58,237,.65);
+    }
+    .notify-btn:active { transform: translateY(0); }
+
+    .success-msg {
+      display: none;
+      margin-top: 1rem;
+      font-size: .88rem;
+      color: #34d399;
+      animation: fadeIn .5s ease both;
+    }
+
+    /* ─────────────────────────────────────────────
+       Shared keyframes
+    ───────────────────────────────────────────── */
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ─────────────────────────────────────────────
+       Scan-line vignette
+    ───────────────────────────────────────────── */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,.04) 2px,
+        rgba(0,0,0,.04) 4px
+      );
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 51;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.7) 100%);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background layers -->
+  <canvas id="stars-canvas"></canvas>
+  <div class="nebula"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- Post-process overlays -->
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+
+  <!-- Main content -->
+  <div class="wrapper">
+
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Caestus Labs
+    </div>
+
+    <h1>
+      <span class="word-coming">Coming</span>
+      <span class="word-soon">Soon</span>
+    </h1>
+
+    <p class="subtitle">
+      We're building something extraordinary. A new era of innovation is on the horizon —
+      sign up to be the first to know.
+    </p>
+
+    <!-- Countdown -->
+    <div class="countdown">
+      <div class="cd-block">
+        <div class="cd-value" id="cd-days">00</div>
+        <div class="cd-label">Days</div>
+      </div>
+      <div class="cd-block">
+        <div class="cd-value" id="cd-hours">00</div>
+        <div class="cd-label">Hours</div>
+      </div>
+      <div class="cd-block">
+        <div class="cd-value" id="cd-mins">00</div>
+        <div class="cd-label">Minutes</div>
+      </div>
+      <div class="cd-block">
+        <div class="cd-value" id="cd-secs">00</div>
+        <div class="cd-label">Seconds</div>
+      </div>
+    </div>
+
+    <!-- Notify form -->
+    <form class="notify-form" id="notify-form">
+      <input
+        type="email"
+        class="notify-input"
+        id="notify-email"
+        placeholder="Enter your email address"
+        required
+        autocomplete="email"
+      />
+      <button type="submit" class="notify-btn">Notify Me</button>
+    </form>
+    <p class="success-msg" id="success-msg">🎉 You're on the list! We'll be in touch soon.</p>
+
+  </div>
+
+  <script>
+    /* ── Star-field ─────────────────────────────── */
+    (function () {
+      const canvas = document.getElementById('stars-canvas');
+      const ctx = canvas.getContext('2d');
+      let stars = [];
+      const NUM = 240;
+
+      function resize() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      function init() {
+        stars = [];
+        for (let i = 0; i < NUM; i++) {
+          stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 1.5 + 0.3,
+            speed: Math.random() * 0.4 + 0.05,
+            opacity: Math.random(),
+            opacityDir: Math.random() > 0.5 ? 1 : -1,
+            opacitySpeed: Math.random() * 0.008 + 0.002,
+          });
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        stars.forEach(s => {
+          s.opacity += s.opacityDir * s.opacitySpeed;
+          if (s.opacity >= 1) { s.opacity = 1; s.opacityDir = -1; }
+          if (s.opacity <= 0) { s.opacity = 0; s.opacityDir =  1; }
+
+          // drift downward slowly
+          s.y += s.speed;
+          if (s.y > canvas.height) { s.y = 0; s.x = Math.random() * canvas.width; }
+
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${s.opacity})`;
+          ctx.fill();
+        });
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', () => { resize(); init(); });
+      resize();
+      init();
+      draw();
+    })();
+
+    /* ── Countdown timer ────────────────────────── */
+    (function () {
+      // Launch date: 60 days from page load (adjust as needed)
+      const launch = new Date();
+      launch.setDate(launch.getDate() + 60);
+
+      const elDays  = document.getElementById('cd-days');
+      const elHours = document.getElementById('cd-hours');
+      const elMins  = document.getElementById('cd-mins');
+      const elSecs  = document.getElementById('cd-secs');
+
+      function pad(n) { return String(n).padStart(2, '0'); }
+
+      function flip(el, val) {
+        const padded = pad(val);
+        if (el.textContent !== padded) {
+          el.textContent = padded;
+          el.classList.remove('flip');
+          void el.offsetWidth; // reflow
+          el.classList.add('flip');
+        }
+      }
+
+      function tick() {
+        const diff = launch - Date.now();
+        if (diff <= 0) {
+          ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(id =>
+            document.getElementById(id).textContent = '00');
+          return;
+        }
+        const d = Math.floor(diff / 864e5);
+        const h = Math.floor((diff % 864e5) / 36e5);
+        const m = Math.floor((diff % 36e5)  / 6e4);
+        const s = Math.floor((diff % 6e4)   / 1e3);
+        flip(elDays,  d);
+        flip(elHours, h);
+        flip(elMins,  m);
+        flip(elSecs,  s);
+      }
+
+      tick();
+      setInterval(tick, 1000);
+    })();
+
+    /* ── Notify form ────────────────────────────── */
+    document.getElementById('notify-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      this.style.display = 'none';
+      document.getElementById('success-msg').style.display = 'block';
+    });
+  </script>
+</body>
+</html>
