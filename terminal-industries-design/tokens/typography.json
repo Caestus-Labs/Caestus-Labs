@@ -1,0 +1,101 @@
+{
+  "families": [
+    "SuisseIntl",
+    "SFMono-Regular"
+  ],
+  "scale": {
+    "heading-1": {
+      "fontFamily": "SuisseIntl",
+      "fontSize": "11.3125rem",
+      "fontWeight": "700",
+      "lineHeight": null,
+      "source": "css"
+    },
+    "heading-2": {
+      "fontFamily": "SuisseIntl",
+      "fontSize": "11.25rem",
+      "fontWeight": "700",
+      "lineHeight": null,
+      "source": "css"
+    },
+    "heading-3": {
+      "fontFamily": "SuisseIntl",
+      "fontSize": "min(5.729vw,146.6666666667px)",
+      "fontWeight": "700",
+      "lineHeight": null,
+      "source": "css"
+    },
+    "body": {
+      "fontFamily": "SFMono-Regular",
+      "fontSize": ".875rem",
+      "fontWeight": "400",
+      "lineHeight": null,
+      "source": "css"
+    },
+    "caption": {
+      "fontFamily": "SFMono-Regular",
+      "fontSize": "1rem",
+      "fontWeight": "400",
+      "lineHeight": null,
+      "source": "css"
+    },
+    "code": {
+      "fontFamily": "SFMono-Regular",
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "lineHeight": null,
+      "source": "css"
+    }
+  },
+  "fontFaces": [
+    {
+      "family": "SuisseIntl",
+      "src": "https://terminal-industries.com/static/fonts/SuisseIntl-Regular.woff2",
+      "format": "woff2",
+      "weight": "400"
+    },
+    {
+      "family": "SuisseIntl",
+      "src": "https://terminal-industries.com/static/fonts/SuisseIntl-Book.woff2",
+      "format": "woff2",
+      "weight": "450"
+    },
+    {
+      "family": "SuisseIntl",
+      "src": "https://terminal-industries.com/static/fonts/SuisseIntl-Semibold.woff2",
+      "format": "woff2",
+      "weight": "600"
+    },
+    {
+      "family": "SuisseIntl",
+      "src": "https://terminal-industries.com/static/fonts/SuisseIntl-Medium.woff2",
+      "format": "woff2",
+      "weight": "500"
+    },
+    {
+      "family": "Geist Mono",
+      "src": "https://terminal-industries.com/static/fonts/GeistMono-Regular.woff2",
+      "format": "woff2",
+      "weight": "400"
+    },
+    {
+      "family": "Geist Mono",
+      "src": "https://terminal-industries.com/static/fonts/GeistMono-SemiBold.woff2",
+      "format": "woff2",
+      "weight": "600"
+    },
+    {
+      "family": "Geist Mono",
+      "src": "https://terminal-industries.com/static/fonts/GeistMono-Bold.woff2",
+      "format": "woff2",
+      "weight": "700"
+    }
+  ],
+  "rules": {
+    "maxSizesPerScreen": 4,
+    "headingWeightRange": "600-700",
+    "bodyWeight": 400,
+    "lineHeightBody": 1.5,
+    "lineHeightHeading": 1.2
+  }
+}

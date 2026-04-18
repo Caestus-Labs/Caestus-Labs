@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/* Caestus Labs Design Tokens */
+:root {
+  --background-primary: #0A0A0C;
+  --background-secondary: #15151A;
+  --text-primary: #F2EFEA;
+  --text-secondary: #8A8A90;
+  --border-color: #1F1F24;
+  --accent: #E6FF3C;
+}
+
+@theme inline {
+  /* Colors */
+  --color-background-primary: var(--background-primary);
+  --color-background-secondary: var(--background-secondary);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-border: var(--border-color);
+  --color-accent: var(--accent);
+
+  /* Typography */
+  --font-display: "PP Neue Montreal", -apple-system, sans-serif;
+  --font-body: "Söhne", "Inter", -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", monospace;
+
+  /* Spacing */
+  --spacing-desktop-margin: 120px;
+  --spacing-mobile-margin: 24px;
+
+  /* Border Radius */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+
+  /* Max Width */
+  --max-width-content: 1440px;
+}
+
+@font-face {
+  font-family: "PP Neue Montreal";
+  src: url("/fonts/PPNeueMontreal-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PP Neue Montreal";
+  src: url("/fonts/PPNeueMontreal-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+body {
+  background: var(--background-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+}

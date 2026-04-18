@@ -1,0 +1,98 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "core": {
+    "background": {
+      "value": "#ffffff",
+      "role": "background",
+      "name": "tw-ring-offset-color"
+    },
+    "text-primary": {
+      "value": "#052424",
+      "role": "text-primary"
+    },
+    "text-muted": {
+      "value": "#7f7f7f",
+      "role": "text-muted"
+    },
+    "surface": {
+      "value": "#eeeeee",
+      "role": "surface"
+    },
+    "border": {
+      "value": "#454742",
+      "role": "border"
+    },
+    "accent": {
+      "value": "#abff02",
+      "role": "accent"
+    }
+  },
+  "status": {
+    "danger": {
+      "value": "#dc2626",
+      "role": "danger"
+    },
+    "success": {
+      "value": "#22c55e",
+      "role": "success"
+    }
+  },
+  "extended": {
+    "tw-prose-quote-borders": {
+      "value": "#e5e5e5",
+      "role": "unknown",
+      "name": "tw-prose-quote-borders"
+    },
+    "color-c2c2c2": {
+      "value": "#c2c2c2",
+      "role": "unknown"
+    },
+    "color-000000": {
+      "value": "#000000",
+      "role": "unknown"
+    },
+    "color-1d1d1d": {
+      "value": "#1d1d1d",
+      "role": "unknown"
+    },
+    "color-9ca3af": {
+      "value": "#9ca3af",
+      "role": "unknown"
+    },
+    "tw-prose-invert-quote-borders": {
+      "value": "#374151",
+      "role": "unknown",
+      "name": "tw-prose-invert-quote-borders"
+    },
+    "color-586a6a": {
+      "value": "#586a6a",
+      "role": "unknown"
+    },
+    "color-f87171": {
+      "value": "#f87171",
+      "role": "unknown"
+    },
+    "color-333333": {
+      "value": "#333333",
+      "role": "unknown"
+    },
+    "color-6b7280": {
+      "value": "#6b7280",
+      "role": "unknown"
+    },
+    "tw-prose-th-borders": {
+      "value": "#d1d5db",
+      "role": "unknown",
+      "name": "tw-prose-th-borders"
+    },
+    "tw-prose-invert-th-borders": {
+      "value": "#4b5563",
+      "role": "unknown",
+      "name": "tw-prose-invert-th-borders"
+    }
+  },
+  "meta": {
+    "theme": "light",
+    "extracted": "2026-04-18"
+  }
+}
