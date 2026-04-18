@@ -1,27 +1,34 @@
 'use client'
 
 import { motion, useInView } from 'framer-motion'
+import dynamic from 'next/dynamic'
 import { useRef } from 'react'
 import SectionLabel from '@/components/ui/SectionLabel'
 
+const CubeWorld = dynamic(() => import('@/components/scene/CubeWorld'), {
+  ssr: false,
+  loading: () => null,
+})
+
 export default function Vision() {
-  const ref = useRef(null)
+  const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, amount: 0.3 })
 
   return (
-    <section ref={ref} className="min-h-screen relative flex items-center">
-      {/* Background image with Ken Burns zoom - placeholder for now */}
-      <motion.div
-        className="absolute inset-0 z-0 bg-background-secondary"
-        animate={isInView ? { scale: 1.06 } : { scale: 1 }}
-        transition={{ duration: 8, ease: 'linear' }}
-      >
-        <div className="w-full h-full flex items-center justify-center">
-          <span className="text-text-secondary/30 text-sm font-[family-name:var(--font-mono)]">
-            Vision Background Image
-          </span>
-        </div>
-      </motion.div>
+    <section ref={ref} className="min-h-screen relative flex items-center overflow-hidden bg-background">
+      {/* Cube world background — dives in as user scrolls */}
+      <div className="absolute inset-0 z-0">
+        <CubeWorld sectionRef={ref} />
+      </div>
+
+      {/* Vignette to keep text readable over cubes */}
+      <div
+        className="absolute inset-0 z-[1] pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse 60% 50% at 30% 50%, rgba(10,10,12,0.85) 0%, rgba(10,10,12,0.6) 50%, rgba(10,10,12,0.2) 100%)',
+        }}
+      />
 
       <div className="relative z-10 px-6 md:px-[120px] max-w-[1440px] mx-auto w-full">
         <SectionLabel number="002" title="THE VISION" />
