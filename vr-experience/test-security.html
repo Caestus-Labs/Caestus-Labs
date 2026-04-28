@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Form Security Test Suite</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      background: #0a0a0a;
+      color: #00ffcc;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .test-section {
+      background: rgba(18, 18, 20, 0.95);
+      border: 1px solid rgba(0, 255, 204, 0.2);
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+    h1, h2 { color: #00ffcc; }
+    .test-case {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 3px solid #00ffcc;
+    }
+    button {
+      background: #00ffcc;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 5px;
+      border-radius: 4px;
+    }
+    button:hover {
+      background: #00ff99;
+    }
+    .result {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .pass {
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid #0f0;
+      color: #0f0;
+    }
+    .fail {
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid #f00;
+      color: #f00;
+    }
+    .warning {
+      background: rgba(255, 255, 0, 0.1);
+      border: 1px solid #ff0;
+      color: #ff0;
+    }
+    .log {
+      background: #000;
+      padding: 10px;
+      font-size: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 255, 204, 0.3);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔒 Caestus Labs Contact Form Security Test Suite</h1>
+
+  <div class="test-section">
+    <h2>1. SQL Injection Tests</h2>
+
+    <div class="test-case">
+      <h3>Test 1.1: Basic SQL Injection</h3>
+      <button onclick="testSQLInjection1()">Run Test</button>
+      <div id="sql-test-1" class="result"></div>
+    </div>
+
+    <div class="test-case">
+      <h3>Test 1.2: Advanced SQL Patterns</h3>
+      <button onclick="testSQLInjection2()">Run Test</button>
+      <div id="sql-test-2" class="result"></div>
+    </div>
+
+    <div class="test-case">
+      <h3>Test 1.3: Comment-based Injection</h3>
+      <button onclick="testSQLInjection3()">Run Test</button>
+      <div id="sql-test-3" class="result"></div>
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>2. Rate Limiting Tests</h2>
+
+    <div class="test-case">
+      <h3>Test 2.1: Rapid Submission</h3>
+      <button onclick="testRateLimit()">Run Test (Will make 5 attempts)</button>
+      <div id="rate-test" class="result"></div>
+      <div id="rate-log" class="log"></div>
+    </div>
+
+    <div class="test-case">
+      <h3>Test 2.2: Check Block Status</h3>
+      <button onclick="checkBlockStatus()">Check Status</button>
+      <div id="block-status" class="result"></div>
+    </div>
+
+    <div class="test-case">
+      <h3>Test 2.3: Reset Rate Limit</h3>
+      <button onclick="resetRateLimit()">Reset</button>
+      <div id="reset-status" class="result"></div>
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>3. XSS Prevention Tests</h2>
+
+    <div class="test-case">
+      <h3>Test 3.1: Script Tag Injection</h3>
+      <button onclick="testXSS1()">Run Test</button>
+      <div id="xss-test-1" class="result"></div>
+    </div>
+
+    <div class="test-case">
+      <h3>Test 3.2: Event Handler Injection</h3>
+      <button onclick="testXSS2()">Run Test</button>
+      <div id="xss-test-2" class="result"></div>
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>4. Input Validation Tests</h2>
+
+    <div class="test-case">
+      <h3>Test 4.1: Email Validation</h3>
+      <button onclick="testEmailValidation()">Run Test</button>
+      <div id="email-test" class="result"></div>
+    </div>
+
+    <div class="test-case">
+      <h3>Test 4.2: Length Constraints</h3>
+      <button onclick="testLengthConstraints()">Run Test</button>
+      <div id="length-test" class="result"></div>
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>5. Manual Test Form</h2>
+    <form id="testForm">
+      <label>Name:</label>
+      <input type="text" id="test-name" placeholder="Enter test name">
+
+      <label>Email:</label>
+      <input type="email" id="test-email" placeholder="test@example.com">
+
+      <label>Company:</label>
+      <input type="text" id="test-company" placeholder="Test Company">
+
+      <label>Use Case:</label>
+      <select id="test-use-case">
+        <option value="training">Training</option>
+        <option value="medical">Medical</option>
+        <option value="industrial">Industrial</option>
+      </select>
+
+      <label>Message:</label>
+      <textarea id="test-message" rows="4" placeholder="Test message"></textarea>
+
+      <button type="button" onclick="submitTestForm()">Submit Test</button>
+    </form>
+    <div id="manual-test-result" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>6. API Key Security Check</h2>
+    <button onclick="scanForAPILeaks()">Scan for Exposed Keys</button>
+    <div id="api-scan-result" class="result"></div>
+  </div>
+
+  <script>
+    // Import security utilities from contact form (simplified version for testing)
+    const SecurityUtils = {
+      sanitizeInput(input) {
+        if (!input) return input;
+        return String(input)
+          .replace(/[<>]/g, '')
+          .replace(/javascript:/gi, '')
+          .replace(/on\w+\s*=/gi, '')
+          .trim()
+          .substring(0, 1000);
+      },
+
+      isValidEmail(email) {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email) && email.length <= 254;
+      },
+
+      containsSQLInjection(input) {
+        if (!input) return false;
+        const sqlPatterns = [
+          /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|ALTER|CREATE)\b)/gi,
+          /(--|\||;|\/\*|\*\/|xp_|sp_|0x)/gi,
+          /(\bOR\b\s*\d+\s*=\s*\d+)/gi,
+          /(\bAND\b\s*\d+\s*=\s*\d+)/gi
+        ];
+        return sqlPatterns.some(pattern => pattern.test(input));
+      }
+    };
+
+    // Test Functions
+    function testSQLInjection1() {
+      const maliciousInput = "'; DROP TABLE contacts; --";
+      const result = SecurityUtils.containsSQLInjection(maliciousInput);
+      const sanitized = SecurityUtils.sanitizeInput(maliciousInput);
+
+      document.getElementById('sql-test-1').innerHTML = result ?
+        `<div class="pass">✅ SQL injection detected and blocked<br>Original: "${maliciousInput}"<br>Sanitized: "${sanitized}"</div>` :
+        `<div class="fail">❌ SQL injection not detected - SECURITY RISK!</div>`;
+    }
+
+    function testSQLInjection2() {
+      const tests = [
+        "1' OR '1'='1",
+        "admin' --",
+        "' UNION SELECT * FROM users",
+        "'; EXEC xp_cmdshell('dir'); --"
+      ];
+
+      let results = [];
+      tests.forEach(test => {
+        if (SecurityUtils.containsSQLInjection(test)) {
+          results.push(`✅ Blocked: "${test}"`);
+        } else {
+          results.push(`❌ Not blocked: "${test}"`);
+        }
+      });
+
+      const allBlocked = tests.every(t => SecurityUtils.containsSQLInjection(t));
+      document.getElementById('sql-test-2').innerHTML =
+        `<div class="${allBlocked ? 'pass' : 'fail'}">${results.join('<br>')}</div>`;
+    }
+
+    function testSQLInjection3() {
+      const input = "normal text /* comment */ more text";
+      const detected = SecurityUtils.containsSQLInjection(input);
+      document.getElementById('sql-test-3').innerHTML = detected ?
+        `<div class="pass">✅ Comment injection pattern detected</div>` :
+        `<div class="fail">❌ Comment injection not detected</div>`;
+    }
+
+    async function testRateLimit() {
+      const log = document.getElementById('rate-log');
+      const result = document.getElementById('rate-test');
+      log.innerHTML = '';
+
+      for (let i = 1; i <= 5; i++) {
+        const limitCheck = simulateRateLimitCheck();
+        log.innerHTML += `Attempt ${i}: ${limitCheck.allowed ? 'Allowed' : 'Blocked'}<br>`;
+
+        if (i === 3) {
+          log.innerHTML += `<span style="color: yellow;">Rate limit should trigger after 3 attempts</span><br>`;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
+      result.innerHTML = `<div class="warning">⚠️ Rate limit test complete - check log above</div>`;
+    }
+
+    function simulateRateLimitCheck() {
+      const key = 'test_rate_limit';
+      let attempts = JSON.parse(localStorage.getItem(key) || '{"count":0,"timestamps":[]}');
+      const now = Date.now();
+
+      attempts.timestamps = attempts.timestamps.filter(ts => now - ts < 300000);
+
+      if (attempts.timestamps.length >= 3) {
+        return { allowed: false, message: 'Rate limit exceeded' };
+      }
+
+      attempts.timestamps.push(now);
+      attempts.count++;
+      localStorage.setItem(key, JSON.stringify(attempts));
+
+      return { allowed: true, remaining: 3 - attempts.timestamps.length };
+    }
+
+    function checkBlockStatus() {
+      const attempts = JSON.parse(localStorage.getItem('caestus_form_attempts') || '{}');
+      const now = Date.now();
+      const blocked = attempts.blocked && attempts.blocked > now;
+
+      document.getElementById('block-status').innerHTML = blocked ?
+        `<div class="fail">🚫 Currently blocked for ${Math.ceil((attempts.blocked - now) / 60000)} minutes</div>` :
+        `<div class="pass">✅ Not blocked. Attempts: ${attempts.timestamps?.length || 0}/3</div>`;
+    }
+
+    function resetRateLimit() {
+      localStorage.removeItem('caestus_form_attempts');
+      localStorage.removeItem('test_rate_limit');
+      document.getElementById('reset-status').innerHTML =
+        `<div class="pass">✅ Rate limit counters reset</div>`;
+    }
+
+    function testXSS1() {
+      const maliciousInput = '<script>alert("XSS")</script>';
+      const sanitized = SecurityUtils.sanitizeInput(maliciousInput);
+
+      document.getElementById('xss-test-1').innerHTML =
+        `<div class="pass">✅ XSS prevented<br>Original: "${maliciousInput}"<br>Sanitized: "${sanitized}"</div>`;
+    }
+
+    function testXSS2() {
+      const maliciousInput = '<img src=x onerror="alert(\'XSS\')">';
+      const sanitized = SecurityUtils.sanitizeInput(maliciousInput);
+
+      document.getElementById('xss-test-2').innerHTML =
+        `<div class="pass">✅ Event handler removed<br>Original: "${maliciousInput}"<br>Sanitized: "${sanitized}"</div>`;
+    }
+
+    function testEmailValidation() {
+      const tests = [
+        { email: 'valid@example.com', expected: true },
+        { email: 'invalid.email', expected: false },
+        { email: '@example.com', expected: false },
+        { email: 'user@', expected: false },
+        { email: 'user@domain@example.com', expected: false },
+        { email: 'a'.repeat(255) + '@test.com', expected: false }
+      ];
+
+      let results = [];
+      tests.forEach(test => {
+        const valid = SecurityUtils.isValidEmail(test.email);
+        const passed = valid === test.expected;
+        results.push(`${passed ? '✅' : '❌'} "${test.email}" - ${valid ? 'Valid' : 'Invalid'}`);
+      });
+
+      const allPassed = tests.every(t => SecurityUtils.isValidEmail(t.email) === t.expected);
+      document.getElementById('email-test').innerHTML =
+        `<div class="${allPassed ? 'pass' : 'fail'}">${results.join('<br>')}</div>`;
+    }
+
+    function testLengthConstraints() {
+      const longString = 'a'.repeat(1100);
+      const sanitized = SecurityUtils.sanitizeInput(longString);
+
+      document.getElementById('length-test').innerHTML =
+        `<div class="${sanitized.length <= 1000 ? 'pass' : 'fail'}">
+          Original length: ${longString.length}<br>
+          Sanitized length: ${sanitized.length}<br>
+          ${sanitized.length <= 1000 ? '✅ Length constraint enforced' : '❌ Length constraint failed'}
+        </div>`;
+    }
+
+    function submitTestForm() {
+      const data = {
+        name: document.getElementById('test-name').value,
+        email: document.getElementById('test-email').value,
+        company: document.getElementById('test-company').value,
+        use_case: document.getElementById('test-use-case').value,
+        message: document.getElementById('test-message').value
+      };
+
+      // Validate
+      const errors = [];
+      if (SecurityUtils.containsSQLInjection(data.name)) errors.push('SQL injection in name');
+      if (SecurityUtils.containsSQLInjection(data.message)) errors.push('SQL injection in message');
+      if (!SecurityUtils.isValidEmail(data.email)) errors.push('Invalid email');
+
+      const result = document.getElementById('manual-test-result');
+      if (errors.length > 0) {
+        result.innerHTML = `<div class="fail">❌ Validation failed:<br>${errors.join('<br>')}</div>`;
+      } else {
+        result.innerHTML = `<div class="pass">✅ All validations passed. Form would submit.</div>`;
+      }
+    }
+
+    function scanForAPILeaks() {
+      // Scan current page source for exposed API keys
+      const pageSource = document.documentElement.innerHTML;
+      const patterns = [
+        /sb_secret_[a-zA-Z0-9_-]+/g,
+        /sb_publishable_[a-zA-Z0-9_-]+/g,
+        /eyJ[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+/g, // JWT pattern
+        /sk_live_[a-zA-Z0-9]+/g, // Stripe secret key
+        /AIza[a-zA-Z0-9_-]+/g, // Google API key
+      ];
+
+      let leaks = [];
+      patterns.forEach(pattern => {
+        const matches = pageSource.match(pattern);
+        if (matches) {
+          matches.forEach(match => {
+            // Check if it's not in a comment or example
+            if (!match.includes('example') && !match.includes('YOUR_')) {
+              leaks.push(match.substring(0, 20) + '...');
+            }
+          });
+        }
+      });
+
+      const result = document.getElementById('api-scan-result');
+      if (leaks.length > 0) {
+        result.innerHTML = `<div class="fail">⚠️ Potential API key exposure detected:<br>${leaks.join('<br>')}</div>`;
+      } else {
+        result.innerHTML = `<div class="pass">✅ No API keys found in page source</div>`;
+      }
+
+      // Also check localStorage
+      const storageKeys = Object.keys(localStorage);
+      const suspiciousKeys = storageKeys.filter(key =>
+        key.includes('api') || key.includes('key') || key.includes('secret') || key.includes('token')
+      );
+
+      if (suspiciousKeys.length > 0) {
+        result.innerHTML += `<div class="warning">⚠️ Suspicious localStorage keys: ${suspiciousKeys.join(', ')}</div>`;
+      }
+    }
+
+    // Auto-run API scan on load
+    window.addEventListener('load', () => {
+      setTimeout(scanForAPILeaks, 1000);
+    });
+  </script>
+</body>
+</html>

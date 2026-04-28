@@ -1,13 +1,21 @@
 // API Configuration
-// Note: These appear to be Stripe-style keys. For Supabase, you typically need:
-// - A URL like: https://xxxxx.supabase.co
-// - An anon key starting with: eyJ...
-const API_PUBLISHABLE_KEY = 'sb_publishable_w0zMNYmXjuYyA6eGYaNV2Q_dd7vXxDo';
-const API_SECRET_KEY = 'sb_secret_inz0rriw-RWf_AndFM1NvA_eHI3bho8';
+// SECURITY WARNING: Never hardcode API keys in JavaScript files!
+// JavaScript files are visible to anyone who views your website source.
+//
+// For production, use one of these secure methods:
+// 1. Server-side API endpoint that handles form submissions
+// 2. Environment variables loaded at build time (for static sites)
+// 3. Serverless functions (Vercel, Netlify Functions, etc.)
 
-// If you have actual Supabase credentials, use these instead:
-const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // e.g., https://xxxxx.supabase.co
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // starts with eyJ...
+// Temporary configuration for development only
+// Replace with your actual Supabase URL and ANON key
+// The ANON key is safe to expose as it's meant for public client-side use
+// Never expose service role keys or secret keys in client-side code!
+const SUPABASE_URL = window.SUPABASE_URL || 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY';
+
+// Check if we're using the provided Stripe-style keys (these need server-side handling)
+const REQUIRES_SERVER_ENDPOINT = window.API_ENDPOINT || null;
 
 // Rate limiting configuration
 const RATE_LIMIT = {
@@ -172,22 +180,83 @@ document.addEventListener('DOMContentLoaded', function() {
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
 
+    // Check rate limit first
+    const limitCheck = rateLimiter.checkLimit();
+    if (!limitCheck.allowed) {
+      statusDiv.className = 'form-status error';
+      statusDiv.textContent = limitCheck.message;
+      return;
+    }
+
+    // Show rate limit warning if needed
+    if (limitCheck.message) {
+      statusDiv.className = 'form-status warning';
+      statusDiv.textContent = limitCheck.message;
+      setTimeout(() => {
+        statusDiv.className = 'form-status';
+        statusDiv.textContent = '';
+      }, 3000);
+    }
+
     // Show loading state
     submitBtn.classList.add('loading');
     submitBtn.disabled = true;
     statusDiv.className = 'form-status';
     statusDiv.textContent = '';
 
-    // Get form data
+    // Get and sanitize form data
     const formData = new FormData(form);
-    const data = {
+    const rawData = {
       name: formData.get('name'),
       company: formData.get('company') || null,
       email: formData.get('email'),
       use_case: formData.get('use_case'),
-      message: formData.get('message') || null,
+      message: formData.get('message') || null
+    };
+
+    // Security validation
+    const validationErrors = [];
+
+    // Check for SQL injection attempts
+    for (const [key, value] of Object.entries(rawData)) {
+      if (value && SecurityUtils.containsSQLInjection(value)) {
+        validationErrors.push(`Invalid characters detected in ${key} field`);
+      }
+    }
+
+    // Validate email format
+    if (!SecurityUtils.isValidEmail(rawData.email)) {
+      validationErrors.push('Please enter a valid email address');
+    }
+
+    // If validation fails, show error and don't submit
+    if (validationErrors.length > 0) {
+      statusDiv.className = 'form-status error';
+      statusDiv.textContent = validationErrors[0];
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled = false;
+
+      // Log suspicious activity
+      console.warn('Form validation failed:', {
+        errors: validationErrors,
+        fingerprint: SecurityUtils.getDeviceFingerprint(),
+        timestamp: new Date().toISOString()
+      });
+
+      return;
+    }
+
+    // Sanitize all inputs
+    const data = {
+      name: SecurityUtils.sanitizeInput(rawData.name),
+      company: SecurityUtils.sanitizeInput(rawData.company),
+      email: SecurityUtils.sanitizeInput(rawData.email),
+      use_case: SecurityUtils.sanitizeInput(rawData.use_case),
+      message: SecurityUtils.sanitizeInput(rawData.message),
       user_agent: navigator.userAgent,
-      source: 'website'
+      source: 'website',
+      fingerprint: SecurityUtils.getDeviceFingerprint(),
+      submission_timestamp: new Date().toISOString()
     };
 
     try {
