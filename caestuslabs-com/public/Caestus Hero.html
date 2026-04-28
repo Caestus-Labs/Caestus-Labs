@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Caestus Labs — VR you can feel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F5F2;
+    --bg-2:#EDEDEA;
+    --ink:#1C1C1E;
+    --ink-2:#55555A;
+    --coral:#FF6B4A;
+    --guardian:#4FB3FF;
+    --line:rgba(28,28,30,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--bg);color:var(--ink);font-family:"Inter Tight",system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+  body{overflow-x:hidden;}
+  /* Pinned hero */
+  .hero{
+    position:relative;
+    height:400vh; /* scroll range */
+  }
+  .stage{
+    position:sticky;
+    top:0;
+    height:100vh;
+    width:100%;
+    overflow:hidden;
+    background:
+      radial-gradient(ellipse at 50% 40%, #FFFFFF 0%, #F5F5F2 45%, #E8E8E4 100%) !important;
+    transition: background .6s ease;
+  }
+  .stage.dark{
+    background: radial-gradient(ellipse at 50% 50%, #14141A 0%, #08080C 60%, #000 100%) !important;
+  }
+  #scene{position:absolute;inset:0;}
+
+  /* Grain */
+  .grain{
+    position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.06;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* UI chrome */
+  .chrome{
+    position:absolute;inset:0;pointer-events:none;z-index:5;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    padding:28px 40px;
+  }
+  .chrome > *{pointer-events:auto;}
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);
+  }
+  .brand{display:flex;align-items:center;gap:10px;color:var(--ink);font-weight:600;}
+  .brand .mk{
+    width:22px;height:22px;border-radius:6px;background:var(--ink);position:relative;
+    display:grid;place-items:center;
+  }
+  .brand .mk::before,.brand .mk::after{
+    content:"";position:absolute;width:6px;height:6px;border-radius:50%;background:var(--bg);
+  }
+  .brand .mk::before{transform:translateX(-4px);}
+  .brand .mk::after{transform:translateX(4px);}
+  .brand span{font-family:"Inter Tight";font-size:13px;letter-spacing:.01em;text-transform:none;}
+  nav{display:flex;gap:28px;}
+  nav a{color:var(--ink-2);text-decoration:none;transition:color .2s;}
+  nav a:hover{color:var(--ink);}
+
+  .mid{
+    display:grid;grid-template-columns: minmax(320px, 38%) 1fr minmax(0, 38%);
+    align-items:flex-end;padding-bottom:6vh;gap:40px;
+    pointer-events:none;
+  }
+  .copy-stack{
+    position:relative;min-height:280px;pointer-events:auto;
+    grid-column: 1;
+  }
+  .copy{
+    position:absolute;inset:auto 0 0 0;max-width:460px;
+    transition:opacity .6s cubic-bezier(.4,0,.2,1), transform .6s cubic-bezier(.4,0,.2,1);
+    opacity:0;transform:translateY(24px);
+  }
+  .copy.on{opacity:1;transform:translateY(0);}
+  .side{grid-column: 3; justify-self:end;}
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2);
+    display:flex;align-items:center;gap:10px;margin-bottom:22px;
+  }
+  .eyebrow::before{content:"";width:24px;height:1px;background:var(--ink-2);}
+  h1{
+    font-family:"Inter Tight";font-weight:400;font-size:clamp(40px,4.8vw,72px);
+    line-height:.95;letter-spacing:-.035em;
+    text-wrap:balance;
+  }
+  h1 em{font-style:normal;font-weight:500;font-family:"Inter Tight";}
+  h1 .accent{
+    color:transparent;-webkit-text-stroke:1px var(--ink);
+    font-style:italic;font-weight:300;
+  }
+  .sub{
+    margin-top:22px;color:var(--ink-2);font-size:17px;line-height:1.5;max-width:460px;font-weight:400;
+  }
+
+  .side{
+    display:flex;flex-direction:column;align-items:flex-end;gap:14px;
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);
+    text-align:right;
+  }
+  .specchip{
+    display:flex;align-items:center;gap:8px;
+  }
+  .specchip .dot{width:6px;height:6px;border-radius:50%;background:var(--coral);box-shadow:0 0 8px rgba(255,107,74,.6);}
+
+  .bot{
+    display:flex;justify-content:space-between;align-items:flex-end;gap:24px;
+  }
+  .progress{
+    flex:1;max-width:540px;
+  }
+  .progress .labels{
+    display:flex;justify-content:space-between;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin-bottom:10px;
+  }
+  .progress .labels span{transition:color .3s;}
+  .progress .labels span.active{color:var(--ink);}
+  .bar{
+    height:1px;background:var(--line);position:relative;
+  }
+  .bar::before{
+    content:"";position:absolute;left:0;top:-1px;height:3px;width:var(--p,0%);background:var(--ink);transition:width .1s linear;
+  }
+  .bar .ticks{position:absolute;inset:0;display:flex;justify-content:space-between;}
+  .bar .ticks i{width:1px;height:6px;background:var(--line);transform:translateY(-2px);}
+
+  .scrollhint{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2);
+    display:flex;align-items:center;gap:10px;
+  }
+  .scrollhint .line{width:1px;height:28px;background:var(--ink-2);position:relative;overflow:hidden;}
+  .scrollhint .line::after{
+    content:"";position:absolute;top:-14px;left:0;width:1px;height:14px;background:var(--ink);
+    animation:drip 1.8s ease-in-out infinite;
+  }
+  @keyframes drip{0%{top:-14px}100%{top:28px}}
+
+  .stageind{
+    position:absolute;top:50%;right:40px;transform:translateY(-50%);
+    display:flex;flex-direction:column;gap:18px;z-index:6;
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.1em;color:var(--ink-2);
+  }
+  .stageind .item{display:flex;align-items:center;gap:12px;justify-content:flex-end;opacity:.5;transition:opacity .3s;}
+  .stageind .item.active{opacity:1;color:var(--ink);}
+  .stageind .item .num{width:22px;height:22px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font-size:10px;}
+  .stageind .item.active .num{border-color:var(--ink);background:var(--ink);color:var(--bg);}
+
+  /* Fullbleed dark for stage 3 */
+  .stage.dark{background:#0A0A0C;}
+
+  /* When far in stage 3, copy on right dims */
+  .mid.stage3 h1{color:#FFF;}
+  .mid.stage3 .sub{color:rgba(255,255,255,.55);}
+  .mid.stage3 .eyebrow{color:rgba(255,255,255,.55);}
+  .mid.stage3 .eyebrow::before{background:rgba(255,255,255,.55);}
+  .mid.stage3 .accent{-webkit-text-stroke:1px #FFF;}
+
+  .chrome.invert .topbar{color:rgba(255,255,255,.6);}
+  .chrome.invert .brand{color:#FFF;}
+  .chrome.invert .brand .mk{background:#FFF;}
+  .chrome.invert .brand .mk::before,.chrome.invert .brand .mk::after{background:#0A0A0C;}
+  .chrome.invert nav a{color:rgba(255,255,255,.55);}
+  .chrome.invert nav a:hover{color:#FFF;}
+  .chrome.invert .side{color:rgba(255,255,255,.55);}
+  .chrome.invert .progress .labels{color:rgba(255,255,255,.55);}
+  .chrome.invert .progress .labels span.active{color:#FFF;}
+  .chrome.invert .bar{background:rgba(255,255,255,.15);}
+  .chrome.invert .bar::before{background:#FFF;}
+  .chrome.invert .scrollhint{color:rgba(255,255,255,.55);}
+  .chrome.invert .stageind .item{color:rgba(255,255,255,.55);}
+  .chrome.invert .stageind .item.active{color:#FFF;}
+  .chrome.invert .stageind .item .num{border-color:rgba(255,255,255,.18);}
+  .chrome.invert .stageind .item.active .num{background:#FFF;color:#0A0A0C;border-color:#FFF;}
+
+  /* Lens flash overlay */
+  .flash{
+    position:absolute;inset:0;background:#FFFFFF;opacity:0;pointer-events:none;z-index:4;
+    mix-blend-mode:screen;
+  }
+
+  /* Downstream section so scroll has context */
+  .next{
+    min-height:60vh;background:#0A0A0C;color:#FFF;
+    display:grid;place-items:center;padding:80px 40px;
+    font-family:"Inter Tight";
+  }
+  .next h2{font-weight:300;font-size:clamp(32px,4vw,60px);letter-spacing:-.02em;max-width:900px;text-align:center;line-height:1.05;}
+  .next h2 em{font-style:normal;color:var(--coral);font-weight:400;}
+
+  @media (max-width:820px){
+    .chrome{padding:20px;}
+    .stageind{display:none;}
+    .side{display:none;}
+    h1{font-size:48px;}
+  }
+</style>
+</head>
+<body>
+
+<section class="hero" id="hero">
+  <div class="stage" id="stage">
+    <canvas id="scene"></canvas>
+    <div class="flash" id="flash"></div>
+    <div class="grain"></div>
+
+    <div class="chrome" id="chrome">
+      <header class="topbar">
+        <div class="brand">
+          <div class="mk"></div>
+          <span>Caestus Labs</span>
+        </div>
+        <nav>
+          <a>Hardware</a><a>SDK</a><a>Research</a><a>Order</a>
+        </nav>
+        <div style="opacity:.7">EST. 2024 · SF</div>
+      </header>
+
+      <div class="mid" id="mid">
+        <div class="copy-stack">
+          <div class="copy" data-copy="1">
+            <div class="eyebrow">Haptic VR · Prototype 03</div>
+            <h1>
+              VR you can<br>
+              <em>physically</em> <span class="accent">feel.</span>
+            </h1>
+            <p class="sub">Servo-driven arm resistance synchronized to the virtual environment. Pressure, mass, and reach rendered as force — not illusion.</p>
+          </div>
+          <div class="copy" data-copy="2">
+            <div class="eyebrow">02 — Inside the hardware</div>
+            <h1>
+              Twelve servos.<br>
+              <em>One</em> <span class="accent">system.</span>
+            </h1>
+            <p class="sub">A carbon exoskeleton routes force across shoulder, elbow, and wrist. 184g per arm, &lt;4ms latency, cable-driven so the actuators never touch your skin.</p>
+          </div>
+          <div class="copy" data-copy="3">
+            <div class="eyebrow">03 — Presence</div>
+            <h1>
+              The world<br>
+              <em>pushes</em> <span class="accent">back.</span>
+            </h1>
+            <p class="sub">Move your cursor — the environment responds. Every object has weight, every surface resists. This is what training, surgical sim, and remote work feel like when space becomes physical.</p>
+          </div>
+        </div>
+        <div class="side" id="side"></div>
+      </div>
+
+      <footer class="bot">
+        <div class="progress">
+          <div class="labels">
+            <span id="l1" class="active">01 · Device</span>
+            <span id="l2">02 · Craft</span>
+            <span id="l3">03 · Presence</span>
+          </div>
+          <div class="bar" id="bar"><div class="ticks"><i></i><i></i><i></i><i></i></div></div>
+        </div>
+        <div class="scrollhint">
+          Scroll
+          <div class="line"></div>
+        </div>
+      </footer>
+    </div>
+
+    <div class="stageind" id="stageind">
+      <div class="item active" data-s="1"><span>Front</span><span class="num">01</span></div>
+      <div class="item" data-s="2"><span>Back</span><span class="num">02</span></div>
+      <div class="item" data-s="3"><span>Inside</span><span class="num">03</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="next">
+  <h2>Built for training, industrial sim, and remote physical presence. <em>Shipping Q4.</em></h2>
+</section>
+
+<script type="importmap">
+{
+  "imports":{
+    "three":"https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+// ---------- Setup ----------
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+
+const scene = new THREE.Scene();
+scene.background = null; // CSS handles bg
+
+const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 100);
+camera.position.set(0, 0.1, 2.5);
+
+// Env
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+// ---------- Lighting (studio for stages 1-2) ----------
+const keyLight = new THREE.DirectionalLight(0xfff2dd, 2.2);
+keyLight.position.set(3, 4, 2.5);
+scene.add(keyLight);
+const fillLight = new THREE.DirectionalLight(0xbfd8ff, 0.9);
+fillLight.position.set(-3, -1, 2);
+scene.add(fillLight);
+const rimLight = new THREE.DirectionalLight(0xffffff, 1.8);
+rimLight.position.set(-1.5, 2, -3);
+scene.add(rimLight);
+scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+
+// ---------- Procedural headset (placeholder for GLB) ----------
+// Not a copy of any branded device — generic haptic VR visor.
+const headsetGroup = new THREE.Group();
+scene.add(headsetGroup);
+
+const housingMat = new THREE.MeshPhysicalMaterial({
+  color: 0x1e1e21,
+  roughness: 0.55,
+  metalness: 0.15,
+  clearcoat: 0.3,
+  clearcoatRoughness: 0.6,
+});
+const softPlasticMat = new THREE.MeshPhysicalMaterial({
+  color: 0x2a2a2d,
+  roughness: 0.85,
+  metalness: 0.0,
+});
+const fabricMat = new THREE.MeshPhysicalMaterial({
+  color: 0x222226,
+  roughness: 1.0,
+  metalness: 0.0,
+  sheen: 0.6,
+  sheenColor: 0x555566,
+});
+const lensGlassMat = new THREE.MeshPhysicalMaterial({
+  color: 0x050509,
+  roughness: 0.12,
+  metalness: 0.4,
+  clearcoat: 1,
+  clearcoatRoughness: 0.05,
+  transmission: 0.0,
+  reflectivity: 0.6,
+  envMapIntensity: 1.4,
+});
+const accentMat = new THREE.MeshPhysicalMaterial({
+  color: 0xff6b4a,
+  roughness: 0.4,
+  metalness: 0.2,
+  emissive: 0x551a10,
+  emissiveIntensity: 0.5,
+});
+const metalMat = new THREE.MeshPhysicalMaterial({
+  color: 0x8a8a90, roughness:0.3, metalness:0.9,
+});
+
+// Main visor body — rounded box
+function roundedBoxGeom(w,h,d,r, seg=8){
+  const shape = new THREE.Shape();
+  const x=-w/2, y=-h/2;
+  shape.moveTo(x, y+r);
+  shape.lineTo(x, y+h-r);
+  shape.quadraticCurveTo(x, y+h, x+r, y+h);
+  shape.lineTo(x+w-r, y+h);
+  shape.quadraticCurveTo(x+w, y+h, x+w, y+h-r);
+  shape.lineTo(x+w, y+r);
+  shape.quadraticCurveTo(x+w, y, x+w-r, y);
+  shape.lineTo(x+r, y);
+  shape.quadraticCurveTo(x, y, x, y+r);
+  const geo = new THREE.ExtrudeGeometry(shape, {
+    depth:d, bevelEnabled:true, bevelSize:r*0.4, bevelThickness:r*0.4, bevelSegments:seg, curveSegments:seg
+  });
+  geo.translate(0,0,-d/2);
+  geo.computeVertexNormals();
+  return geo;
+}
+
+// Visor front plate
+const visorFront = new THREE.Mesh(roundedBoxGeom(0.75, 0.36, 0.08, 0.08, 10), housingMat);
+visorFront.position.z = 0.04;
+headsetGroup.add(visorFront);
+
+// Visor main body (deeper, set back)
+const visorBody = new THREE.Mesh(roundedBoxGeom(0.68, 0.32, 0.22, 0.06, 10), housingMat);
+visorBody.position.z = -0.08;
+headsetGroup.add(visorBody);
+
+// Lens recesses (two eyes)
+function lens(side){
+  const g = new THREE.Group();
+  // Recess ring (dark trim)
+  const ring = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 0.04, 32), softPlasticMat);
+  ring.rotation.x = Math.PI/2;
+  ring.position.z = 0.08;
+  g.add(ring);
+  // Inner glass disk
+  const glass = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.02, 40), lensGlassMat);
+  glass.rotation.x = Math.PI/2;
+  glass.position.z = 0.095;
+  glass.name = 'lens_'+side;
+  g.add(glass);
+  // Inner conic gradient (sense of depth)
+  const innerCone = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.02, 0.10, 32, 1, true),
+    new THREE.MeshBasicMaterial({color:0x000000, side:THREE.DoubleSide}));
+  innerCone.rotation.x = Math.PI/2;
+  innerCone.position.z = 0.02;
+  g.add(innerCone);
+  return g;
+}
+const leftLens = lens('L');
+leftLens.position.set(-0.16, 0.02, 0);
+headsetGroup.add(leftLens);
+const rightLens = lens('R');
+rightLens.position.set(0.16, 0.02, 0);
+headsetGroup.add(rightLens);
+
+// Face gasket (dark soft rubber) — visible when turned slightly
+const gasketGeo = new THREE.TorusGeometry(0.28, 0.05, 20, 40);
+const gasket = new THREE.Mesh(gasketGeo, softPlasticMat);
+gasket.scale.set(1.25, 0.75, 1);
+gasket.position.set(0, -0.04, -0.18);
+headsetGroup.add(gasket);
+
+// Nose cutout (negative-looking wedge)
+const nose = new THREE.Mesh(
+  new THREE.ConeGeometry(0.06, 0.1, 3),
+  new THREE.MeshBasicMaterial({color:0x050507})
+);
+nose.rotation.x = -Math.PI/2;
+nose.rotation.z = Math.PI;
+nose.position.set(0, -0.12, -0.02);
+headsetGroup.add(nose);
+
+// Side arms (temple pieces going back to strap)
+function sideArm(sign){
+  const g = new THREE.Group();
+  const arm = new THREE.Mesh(
+    new THREE.BoxGeometry(0.22, 0.09, 0.04),
+    housingMat
+  );
+  arm.position.set(sign*0.42, 0.02, -0.12);
+  arm.rotation.y = sign * -0.35;
+  g.add(arm);
+  // Hinge detail
+  const hinge = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.05, 16), metalMat);
+  hinge.rotation.z = Math.PI/2;
+  hinge.position.set(sign*0.34, 0.02, -0.03);
+  g.add(hinge);
+  // Side sensor grille
+  for(let i=0;i<4;i++){
+    const s = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.005, 0.03), accentMat);
+    s.position.set(sign*0.48, 0.05 - i*0.015, -0.14);
+    s.rotation.y = sign*-0.35;
+    g.add(s);
+  }
+  return g;
+}
+headsetGroup.add(sideArm(1));
+headsetGroup.add(sideArm(-1));
+
+// Strap (U-shaped wrap around the back)
+const strapCurve = new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-0.52, 0.05, -0.18),
+  new THREE.Vector3(-0.55, 0.12, -0.38),
+  new THREE.Vector3(-0.35, 0.18, -0.62),
+  new THREE.Vector3(0, 0.2, -0.7),
+  new THREE.Vector3(0.35, 0.18, -0.62),
+  new THREE.Vector3(0.55, 0.12, -0.38),
+  new THREE.Vector3(0.52, 0.05, -0.18),
+]);
+const strapGeo = new THREE.TubeGeometry(strapCurve, 80, 0.045, 12, false);
+const strap = new THREE.Mesh(strapGeo, fabricMat);
+headsetGroup.add(strap);
+
+// Top strap (over head)
+const topStrapCurve = new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-0.28, 0.18, -0.05),
+  new THREE.Vector3(-0.15, 0.36, -0.25),
+  new THREE.Vector3(0, 0.44, -0.4),
+  new THREE.Vector3(0.15, 0.36, -0.25),
+  new THREE.Vector3(0.28, 0.18, -0.05),
+]);
+const topStrapGeo = new THREE.TubeGeometry(topStrapCurve, 60, 0.035, 12, false);
+const topStrap = new THREE.Mesh(topStrapGeo, fabricMat);
+headsetGroup.add(topStrap);
+
+// IPD wheel on bottom
+const ipd = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.04, 24), metalMat);
+ipd.rotation.z = Math.PI/2;
+ipd.position.set(0.12, -0.17, 0.05);
+headsetGroup.add(ipd);
+
+// Brand emboss bar (original, not a logo)
+const brandBar = new THREE.Mesh(
+  new THREE.BoxGeometry(0.12, 0.01, 0.002),
+  new THREE.MeshPhysicalMaterial({color:0x3a3a3e, roughness:0.4, metalness:0.3})
+);
+brandBar.position.set(0, -0.13, 0.082);
+headsetGroup.add(brandBar);
+
+// Front depth-sensor cluster (3 dots across forehead)
+for(let i=0;i<3;i++){
+  const dot = new THREE.Mesh(new THREE.SphereGeometry(0.012, 16, 16),
+    new THREE.MeshPhysicalMaterial({color:0x0a0a0a, roughness:0.1, metalness:0.3, clearcoat:1}));
+  dot.position.set(-0.18 + i*0.18, 0.14, 0.081);
+  headsetGroup.add(dot);
+}
+
+// Contact shadow plane
+const shadowTex = makeRadialShadow();
+const shadowPlane = new THREE.Mesh(
+  new THREE.PlaneGeometry(2.4, 1.2),
+  new THREE.MeshBasicMaterial({map:shadowTex, transparent:true, opacity:0.5, depthWrite:false})
+);
+shadowPlane.rotation.x = -Math.PI/2;
+shadowPlane.position.y = -0.4;
+scene.add(shadowPlane);
+
+function makeRadialShadow(){
+  const c = document.createElement('canvas');
+  c.width=c.height=256;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(128,128,10,128,128,128);
+  g.addColorStop(0,'rgba(0,0,0,0.55)');
+  g.addColorStop(0.5,'rgba(0,0,0,0.2)');
+  g.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g; ctx.fillRect(0,0,256,256);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+// ---------- Stage 3: Interior VR room ----------
+const interior = new THREE.Group();
+interior.visible = false;
+scene.add(interior);
+
+// Floor — dark
+const floorGeo = new THREE.PlaneGeometry(80, 80);
+const floorMat = new THREE.MeshStandardMaterial({color:0x0A0A10, roughness:0.92, metalness:0.1});
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.rotation.x = -Math.PI/2;
+floor.position.y = -1.2;
+interior.add(floor);
+
+// Back wall — very dark
+const wallMat = new THREE.MeshStandardMaterial({color:0x0C0C12, roughness:1, metalness:0});
+const backWall = new THREE.Mesh(new THREE.PlaneGeometry(80, 40), wallMat);
+backWall.position.set(0, 8, -12);
+interior.add(backWall);
+// Side walls for depth
+const sideL = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), wallMat);
+sideL.rotation.y = Math.PI/2; sideL.position.set(-14, 8, 0); interior.add(sideL);
+const sideR = sideL.clone(); sideR.rotation.y = -Math.PI/2; sideR.position.x = 14; interior.add(sideR);
+
+// Guardian boundary (glowing blue rectangle)
+const guardianMat = new THREE.LineBasicMaterial({color:0x4FB3FF, transparent:true, opacity:0.9});
+const guardianGeom = new THREE.BufferGeometry().setFromPoints([
+  new THREE.Vector3(-4, -1.19, -4),
+  new THREE.Vector3( 4, -1.19, -4),
+  new THREE.Vector3( 4, -1.19,  4),
+  new THREE.Vector3(-4, -1.19,  4),
+  new THREE.Vector3(-4, -1.19, -4),
+]);
+const guardian = new THREE.Line(guardianGeom, guardianMat);
+interior.add(guardian);
+
+// Additional glow tube under guardian (for bloom)
+const guardianGlow = new THREE.Mesh(
+  new THREE.BoxGeometry(8.04, 0.02, 0.04),
+  new THREE.MeshBasicMaterial({color:0x4FB3FF})
+);
+guardianGlow.position.set(0, -1.19, -4);
+interior.add(guardianGlow);
+const gg2 = guardianGlow.clone(); gg2.position.z = 4; interior.add(gg2);
+const gg3 = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.02, 8.04), new THREE.MeshBasicMaterial({color:0x4FB3FF}));
+gg3.position.set(-4, -1.19, 0); interior.add(gg3);
+const gg4 = gg3.clone(); gg4.position.x = 4; interior.add(gg4);
+
+// Cube field — instanced with custom shader
+const CUBE_COUNT = 1800;
+const cubeGeom = new THREE.BoxGeometry(0.14, 0.14, 0.14);
+
+// Custom vertex/fragment via onBeforeCompile
+const cubeMat = new THREE.MeshStandardMaterial({
+  color: 0xff6b4a,
+  roughness: 0.5,
+  metalness: 0.1,
+  emissive: 0xff3020,
+  emissiveIntensity: 0.3,
+});
+const uniforms = {
+  uTime: {value:0},
+  uCursor: {value: new THREE.Vector3(0,0,0)},
+  uSigma: {value: 2.5},
+};
+cubeMat.onBeforeCompile = (shader)=>{
+  shader.uniforms.uTime = uniforms.uTime;
+  shader.uniforms.uCursor = uniforms.uCursor;
+  shader.uniforms.uSigma = uniforms.uSigma;
+  shader.vertexShader = `
+    uniform float uTime;
+    uniform vec3 uCursor;
+    uniform float uSigma;
+    attribute float aSeed;
+    varying float vLift;
+  ` + shader.vertexShader.replace(
+    '#include <begin_vertex>',
+    `
+      vec3 transformed = vec3(position);
+      // Instance world position (from instanceMatrix)
+      vec4 worldPos = instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0);
+      vec2 pxz = worldPos.xz;
+      float d = distance(pxz, uCursor.xz);
+      float f = exp(-(d*d) / (uSigma*uSigma));
+      float baseWave = sin(uTime * 1.1 + aSeed * 6.2831) * 0.08
+                     + sin(uTime * 0.4 + aSeed * 3.0) * 0.06;
+      float lift = baseWave + f * 0.9 + f * sin(uTime*3.0 + aSeed*6.28) * 0.2;
+      transformed.y += lift;
+      // Outward drift bias
+      vec2 dir = normalize(pxz - uCursor.xz + vec2(0.0001));
+      transformed.xz += dir * f * 0.15;
+      vLift = lift;
+    `
+  );
+  shader.fragmentShader = `
+    varying float vLift;
+  ` + shader.fragmentShader.replace(
+    '#include <emissivemap_fragment>',
+    `
+      #include <emissivemap_fragment>
+      float glow = clamp(vLift * 1.6, 0.0, 1.2);
+      totalEmissiveRadiance += vec3(1.0, 0.3, 0.15) * glow * 1.1;
+      diffuseColor.rgb = mix(vec3(1.0, 0.71, 0.62), vec3(1.0, 0.25, 0.18), clamp(vLift*2.0, 0.0, 1.0));
+    `
+  );
+};
+
+const cubeMesh = new THREE.InstancedMesh(cubeGeom, cubeMat, CUBE_COUNT);
+const seeds = new Float32Array(CUBE_COUNT);
+const dummy = new THREE.Object3D();
+let idx = 0;
+// Floor field (jittered grid)
+const gridSide = 36;
+for (let i=0;i<gridSide;i++){
+  for (let j=0;j<gridSide;j++){
+    if (idx >= CUBE_COUNT) break;
+    const x = (i/(gridSide-1) - 0.5) * 7.2 + (Math.random()-0.5)*0.12;
+    const z = (j/(gridSide-1) - 0.5) * 7.2 + (Math.random()-0.5)*0.12;
+    const y = -1.13 + Math.random()*0.06;
+    dummy.position.set(x, y, z);
+    const s = 0.6 + Math.random()*0.9;
+    dummy.scale.set(s,s,s);
+    dummy.rotation.set(Math.random()*0.3, Math.random()*Math.PI, Math.random()*0.3);
+    dummy.updateMatrix();
+    cubeMesh.setMatrixAt(idx, dummy.matrix);
+    seeds[idx] = Math.random();
+    idx++;
+  }
+}
+// Near wall vertical cluster
+while (idx < CUBE_COUNT){
+  const x = (Math.random()-0.5)*7;
+  const y = Math.random()*5 - 1;
+  const z = -3.8 + Math.random()*0.4;
+  dummy.position.set(x, y, z);
+  const s = 0.5 + Math.random()*0.8;
+  dummy.scale.set(s,s,s);
+  dummy.rotation.set(Math.random()*0.5, Math.random()*Math.PI, Math.random()*0.5);
+  dummy.updateMatrix();
+  cubeMesh.setMatrixAt(idx, dummy.matrix);
+  seeds[idx] = Math.random();
+  idx++;
+}
+cubeGeom.setAttribute('aSeed', new THREE.InstancedBufferAttribute(seeds, 1));
+cubeMesh.instanceMatrix.needsUpdate = true;
+interior.add(cubeMesh);
+
+// Interior lighting
+const interiorKey = new THREE.DirectionalLight(0xffccaa, 0.6);
+interiorKey.position.set(0, 6, 2);
+interior.add(interiorKey);
+const interiorAmb = new THREE.HemisphereLight(0x2a1a20, 0x050507, 0.35);
+interior.add(interiorAmb);
+const interiorFill = new THREE.PointLight(0xff4a2a, 2.5, 18, 1.4);
+interiorFill.position.set(0, 0.2, 0);
+interior.add(interiorFill);
+const interiorRim = new THREE.PointLight(0x4FB3FF, 1.0, 14, 1.2);
+interiorRim.position.set(0, -0.8, -3.5);
+interior.add(interiorRim);
+
+// ---------- Postprocessing ----------
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(1,1), 0.6, 0.5, 0.85);
+composer.addPass(bloom);
+composer.addPass(new OutputPass());
+
+// ---------- Cursor ----------
+const mouse = {x:0, y:0, tx:0, ty:0};
+window.addEventListener('pointermove', (e)=>{
+  mouse.tx = (e.clientX / innerWidth) * 2 - 1;
+  mouse.ty = -((e.clientY / innerHeight) * 2 - 1);
+});
+// Device orientation fallback
+window.addEventListener('deviceorientation',(e)=>{
+  if(e.gamma==null) return;
+  mouse.tx = (e.gamma/45) * 0.4;
+  mouse.ty = (e.beta/45) * 0.4;
+});
+
+// ---------- Resize ----------
+function resize(){
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h, false);
+  composer.setSize(w, h);
+  camera.aspect = w/h;
+  camera.updateProjectionMatrix();
+}
+resize();
+addEventListener('resize', resize);
+
+// ---------- Scroll orchestration ----------
+const hero = document.getElementById('hero');
+const chrome = document.getElementById('chrome');
+const midEl = document.getElementById('mid');
+const stageEl = document.getElementById('stage');
+const flash = document.getElementById('flash');
+const bar = document.getElementById('bar');
+const l1 = document.getElementById('l1'), l2 = document.getElementById('l2'), l3 = document.getElementById('l3');
+const indicators = [...document.querySelectorAll('.stageind .item')];
+
+let scrollProgress = 0;
+
+function computeScrollProgress(){
+  const rect = hero.getBoundingClientRect();
+  const total = hero.offsetHeight - innerHeight;
+  const p = Math.max(0, Math.min(1, -rect.top / total));
+  scrollProgress = p;
+}
+
+// Offset headset to right-center of viewport so text on left is visible
+// We shift the headset group by world +X, then camera looks at that point.
+function headsetOffsetX(){ return 0; }
+let PIVOT = new THREE.Vector3(0, 0, 0);
+// Center the headset's visible mass at origin (strap pushes center of geometry back, compensate)
+headsetGroup.position.set(0, 0, 0);
+// Scale down so it fills ~40% of viewport at radius 2.5
+headsetGroup.scale.setScalar(0.9);
+shadowPlane.position.set(0, -0.4, 0);
+
+function easeInOut(t){ return t<.5? 2*t*t : 1 - Math.pow(-2*t+2,2)/2; }
+
+// ---------- Main render loop ----------
+const clock = new THREE.Clock();
+
+function render(){
+  const t = clock.getElapsedTime();
+  computeScrollProgress();
+  const p = scrollProgress;
+
+  // Damp mouse
+  mouse.x += (mouse.tx - mouse.x) * 0.08;
+  mouse.y += (mouse.ty - mouse.y) * 0.08;
+
+  // Reset visibility defaults each frame
+  headsetGroup.visible = true;
+  shadowPlane.visible = true;
+  interior.visible = false;
+  stageEl.classList.remove('dark');
+
+  let camPos = new THREE.Vector3();
+  let lookAt = new THREE.Vector3(0, 0, 0);
+  let fov = 35;
+
+  // Force reset headset position each frame in case it drifted
+  headsetGroup.position.x = 0;
+
+  if (p < 0.33) {
+    // ---- STAGE 1: front-facing, cursor-follow, float ----
+    camPos.set(0, 0.05, 3.2);
+    fov = 28;
+
+    // Cursor-follow (yaw + pitch)
+    const tyaw = mouse.x * 0.24;
+    const tpitch = -mouse.y * 0.14;
+    headsetGroup.rotation.y += (tyaw - headsetGroup.rotation.y) * 0.08;
+    headsetGroup.rotation.x += (tpitch - headsetGroup.rotation.x) * 0.08;
+    headsetGroup.rotation.z *= 0.9;
+    headsetGroup.position.y = Math.sin(t * 1.5) * 0.015;
+    flash.style.opacity = 0;
+
+  } else if (p < 0.66) {
+    // ---- STAGE 2: 180° spin to show the BACK of headset ----
+    const s = (p - 0.33) / 0.33;
+    const e = easeInOut(s);
+
+    // Camera holds position front-ish, slight orbit for depth
+    const radius = 2.4 - e * 0.3;
+    const camAngle = e * 0.2; // tiny camera drift for parallax
+    camPos.set(Math.sin(camAngle) * radius * 0.2, 0.1, radius);
+    fov = 32 + e * 4;
+
+    // HEADSET rotates 180° on Y axis
+    const targetYaw = Math.PI * e; // 0 → 180°
+    headsetGroup.rotation.y += (targetYaw - headsetGroup.rotation.y) * 0.12;
+
+    // Subtle cursor-driven pitch/roll overlay
+    const tpitch = -mouse.y * 0.08;
+    const troll = mouse.x * 0.05;
+    headsetGroup.rotation.x += (tpitch - headsetGroup.rotation.x) * 0.08;
+    headsetGroup.rotation.z += (troll - headsetGroup.rotation.z) * 0.08;
+
+    headsetGroup.position.y = Math.sin(t * 1.4) * 0.012;
+    flash.style.opacity = 0;
+
+  } else if (p < 0.80) {
+    // ---- STAGE 2→3 handoff: return to front, then dolly into lens ----
+    const s = (p - 0.66) / 0.14;
+    const e = easeInOut(s);
+
+    // First: snap headset back to front-facing quickly
+    const targetYaw = Math.PI * (1 - e*1.0); // 180° back to 0
+    headsetGroup.rotation.y += (targetYaw - headsetGroup.rotation.y) * 0.18;
+    headsetGroup.rotation.x *= 0.85;
+    headsetGroup.rotation.z *= 0.85;
+
+    // Camera dolly forward toward left lens
+    const startZ = 2.1, endZ = 0.08;
+    const z = startZ + (endZ - startZ) * e;
+    const leftLensX = -0.15;
+    const x = 0 + (leftLensX - 0) * e;
+    camPos.set(x, 0.04 - e * 0.04, z);
+    fov = 34 + e * 26;
+
+    // Start hiding lenses / fading out headset at end
+    if (e > 0.55) {
+      const fade = (e - 0.55) / 0.45;
+      lensGlassMat.opacity = 1 - fade;
+      lensGlassMat.transparent = true;
+      interior.visible = true;
+      stageEl.classList.add('dark');
+    } else {
+      lensGlassMat.opacity = 1;
+    }
+
+    // Lookat slides from origin to left lens
+    const leftLensPos = new THREE.Vector3(-0.15, 0.02, 0.08);
+    const innerTarget = new THREE.Vector3(-0.15, 0.0, -0.5);
+    lookAt.set(0,0,0).lerp(leftLensPos, Math.min(1, e*1.5)).lerp(innerTarget, Math.max(0, e - 0.5) * 2);
+
+    // Flash peak near e ≈ 0.85
+    const flashT = Math.max(0, 1 - Math.abs(e - 0.85) / 0.12);
+    flash.style.opacity = (flashT * flashT).toFixed(3);
+
+  } else {
+    // ---- STAGE 3: inside VR, cursor drives cubes ----
+    headsetGroup.visible = false;
+    shadowPlane.visible = false;
+    interior.visible = true;
+    stageEl.classList.add('dark');
+
+    // Eye-height, looking slightly down to see the cube field
+    camPos.set(mouse.x * 0.4, 0.3, 2.0);
+    fov = 62;
+    lookAt.set(mouse.x * 1.2, -0.3 + mouse.y * 0.5, -2);
+
+    // Decay flash
+    flash.style.opacity = Math.max(0, 1 - (p - 0.80) / 0.04).toFixed(3);
+  }
+
+  camera.position.copy(camPos);
+  camera.lookAt(lookAt);
+  camera.fov = fov;
+  camera.updateProjectionMatrix();
+
+  // Cube field cursor → world
+  const ray = new THREE.Raycaster();
+  ray.setFromCamera(new THREE.Vector2(mouse.x, mouse.y), camera);
+  const plane = new THREE.Plane(new THREE.Vector3(0,1,0), 1.13);
+  const hit = new THREE.Vector3();
+  ray.ray.intersectPlane(plane, hit);
+  if (hit) uniforms.uCursor.value.lerp(hit, 0.12);
+  uniforms.uTime.value = t;
+
+  updateUI(p);
+  composer.render();
+  requestAnimationFrame(render);
+}
+
+const copies = [...document.querySelectorAll('.copy')];
+
+function updateUI(p){
+  bar.style.setProperty('--p', (p*100).toFixed(1) + '%');
+  const stage = p < 0.33 ? 1 : p < 0.66 ? 2 : 3;
+  l1.classList.toggle('active', stage===1);
+  l2.classList.toggle('active', stage===2);
+  l3.classList.toggle('active', stage===3);
+  indicators.forEach(el=>{
+    el.classList.toggle('active', +el.dataset.s === stage);
+  });
+
+  // Show correct per-stage copy; hide during transitions (0.28–0.38, 0.61–0.71)
+  let activeCopy = stage;
+  const inTransition = (p > 0.29 && p < 0.37) || (p > 0.62 && p < 0.72);
+  copies.forEach(el=>{
+    el.classList.toggle('on', !inTransition && +el.dataset.copy === activeCopy);
+  });
+
+  chrome.classList.toggle('invert', p > 0.66);
+  midEl.classList.toggle('stage3', p > 0.66);
+}
+
+render();
+</script>
+</body>
+</html>

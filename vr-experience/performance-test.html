@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance Test - VR Experience</title>
+<style>
+body {
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  background: #0A0A0C;
+  color: #FFF;
+  padding: 20px;
+}
+.metrics {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0,0,0,0.8);
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.8;
+  min-width: 250px;
+}
+.metric {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 5px 0;
+}
+.metric:last-child {
+  border-bottom: none;
+}
+.good { color: #4FB3FF; }
+.warning { color: #FFA500; }
+.bad { color: #FF6B4A; }
+iframe {
+  width: 100%;
+  height: calc(100vh - 40px);
+  border: none;
+  border-radius: 8px;
+}
+</style>
+</head>
+<body>
+<div class="metrics" id="metrics">
+  <div class="metric">
+    <span>FPS:</span>
+    <span id="fps">--</span>
+  </div>
+  <div class="metric">
+    <span>Memory:</span>
+    <span id="memory">--</span>
+  </div>
+  <div class="metric">
+    <span>Model Load Time:</span>
+    <span id="loadtime">--</span>
+  </div>
+  <div class="metric">
+    <span>Draw Calls:</span>
+    <span id="drawcalls">--</span>
+  </div>
+  <div class="metric">
+    <span>Triangles:</span>
+    <span id="triangles">--</span>
+  </div>
+  <div class="metric">
+    <span>Textures:</span>
+    <span id="textures">--</span>
+  </div>
+</div>
+
+<iframe src="index.html" id="vr-frame"></iframe>
+
+<script>
+let fps = 0;
+let frameCount = 0;
+let lastTime = performance.now();
+let loadStartTime = performance.now();
+
+function updateMetrics() {
+  frameCount++;
+  const currentTime = performance.now();
+  const deltaTime = currentTime - lastTime;
+
+  if (deltaTime >= 1000) {
+    fps = Math.round(frameCount * 1000 / deltaTime);
+    frameCount = 0;
+    lastTime = currentTime;
+
+    const fpsEl = document.getElementById('fps');
+    fpsEl.textContent = fps + ' fps';
+    fpsEl.className = fps >= 50 ? 'good' : fps >= 30 ? 'warning' : 'bad';
+  }
+
+  // Memory usage if available
+  if (performance.memory) {
+    const usedMB = Math.round(performance.memory.usedJSHeapSize / 1048576);
+    const totalMB = Math.round(performance.memory.totalJSHeapSize / 1048576);
+    const memEl = document.getElementById('memory');
+    memEl.textContent = `${usedMB}/${totalMB} MB`;
+    memEl.className = usedMB < 100 ? 'good' : usedMB < 200 ? 'warning' : 'bad';
+  }
+
+  requestAnimationFrame(updateMetrics);
+}
+
+// Monitor iframe load
+const iframe = document.getElementById('vr-frame');
+iframe.onload = () => {
+  const loadTime = Math.round(performance.now() - loadStartTime);
+  const loadEl = document.getElementById('loadtime');
+  loadEl.textContent = loadTime + ' ms';
+  loadEl.className = loadTime < 2000 ? 'good' : loadTime < 4000 ? 'warning' : 'bad';
+
+  // Try to access Three.js stats from iframe
+  try {
+    const iframeWindow = iframe.contentWindow;
+    if (iframeWindow.renderer) {
+      const info = iframeWindow.renderer.info;
+      document.getElementById('drawcalls').textContent = info.render.calls || '--';
+      document.getElementById('triangles').textContent = info.render.triangles || '--';
+      document.getElementById('textures').textContent = info.memory.textures || '--';
+    }
+  } catch(e) {
+    console.log('Could not access iframe renderer stats');
+  }
+};
+
+updateMetrics();
+</script>
+</body>
+</html>
