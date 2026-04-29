@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Syntax Check</title>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #0f0; }
+    .error { color: #f00; }
+    .success { color: #0f0; }
+  </style>
+</head>
+<body>
+  <h1>JavaScript Syntax Check</h1>
+  <div id="result">Checking...</div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script>
+    window.addEventListener('error', function(e) {
+      document.getElementById('result').innerHTML =
+        '<div class="error">❌ Error: ' + e.message + '<br>File: ' + e.filename + '<br>Line: ' + e.lineno + '</div>';
+    });
+  </script>
+
+  <script type="module">
+    try {
+      await import('./js/vr-experience.js');
+      document.getElementById('result').innerHTML =
+        '<div class="success">✅ No syntax errors found! Script loaded successfully.</div>';
+    } catch (e) {
+      document.getElementById('result').innerHTML =
+        '<div class="error">❌ Module Error: ' + e.message + '</div>';
+    }
+  </script>
+</body>
+</html>

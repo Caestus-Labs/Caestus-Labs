@@ -448,17 +448,44 @@ h1 .accent{
 }
 .problem-card{
   position:absolute;
-  background:rgba(18, 18, 20, 0.95);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:12px;
-  padding:18px 22px;
+  background:linear-gradient(135deg, rgba(0,0,0,0.98) 0%, rgba(18,18,20,0.95) 100%);
+  border:1px solid rgba(0,255,204,0.3);
+  border-radius:16px;
+  padding:24px 28px;
   opacity:0;
   transform:translateY(20px) scale(0.95);
   transition:all .6s cubic-bezier(.4,0,.2,1);
   pointer-events:auto;
-  max-width:280px;
-  backdrop-filter:blur(10px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.8), 0 0 80px rgba(255,107,74,0.1);
+  width:320px;
+  min-height:160px;
+  backdrop-filter:blur(20px);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.95),
+              0 0 100px rgba(0,255,204,0.08),
+              inset 0 1px 0 rgba(255,255,255,0.05);
+  cursor:pointer;
+  overflow:hidden;
+}
+.problem-card::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(0,255,204,0.3), transparent);
+  opacity:0;
+  transition:opacity 0.3s ease;
+}
+.problem-card:hover{
+  transform:translateY(-5px) scale(1.02);
+  border-color:rgba(0,255,204,0.5);
+  box-shadow: 0 20px 60px rgba(0,0,0,1),
+              0 0 120px rgba(0,255,204,0.12),
+              inset 0 1px 0 rgba(255,255,255,0.08);
+  min-height:200px;
+}
+.problem-card:hover::before{
+  opacity:1;
 }
 .problem-card.show{
   opacity:1;
@@ -466,46 +493,320 @@ h1 .accent{
 }
 .problem-card h3{
   font-family:"Inter Tight";
-  font-size:17px;
+  font-size:20px;
   font-weight:600;
   color:#FFFFFF;
-  margin-bottom:8px;
+  margin-bottom:12px;
+  text-shadow:0 2px 10px rgba(0,0,0,0.8);
+  letter-spacing:-0.3px;
 }
 .problem-card p{
-  font-size:14px;
-  color:rgba(255,255,255,0.7);
-  line-height:1.5;
-  margin-bottom:10px;
+  font-size:15px;
+  color:rgba(255,255,255,0.85);
+  line-height:1.6;
+  margin-bottom:16px;
+  text-shadow:0 1px 6px rgba(0,0,0,0.7);
+  transition:color 0.3s ease;
+}
+.problem-card:hover p{
+  color:rgba(255,255,255,0.95);
 }
 .problem-card .stat{
   font-family:"JetBrains Mono",monospace;
-  font-size:11px;
-  letter-spacing:.12em;
+  font-size:12px;
+  letter-spacing:.1em;
   text-transform:uppercase;
-  color:#ff6b4a;
-  font-weight:500;
+  color:#00ffcc;
+  font-weight:600;
   display:inline-block;
-  padding:4px 8px;
-  background:rgba(255,107,74,0.15);
-  border-radius:4px;
+  padding:6px 12px;
+  background:rgba(0,255,204,0.12);
+  border:1px solid rgba(0,255,204,0.25);
+  border-radius:6px;
+  text-shadow:0 2px 8px rgba(0,0,0,0.8), 0 0 20px rgba(0,255,204,0.3);
+  transition:all 0.3s ease;
+}
+.problem-card:hover .stat{
+  background:rgba(0,255,204,0.18);
+  border-color:rgba(0,255,204,0.35);
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px rgba(0,255,204,0.2);
 }
 
-/* Position cards at end of lines */
+/* Expandable details for problem cards */
+.problem-card .expand-details{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height 0.4s ease, opacity 0.3s ease;
+  opacity:0;
+  margin-top:12px;
+}
+.problem-card:hover .expand-details{
+  max-height:120px;
+  opacity:1;
+}
+.problem-card .expand-details ul{
+  list-style:none;
+  padding:0;
+  margin:8px 0 0 0;
+}
+.problem-card .expand-details li{
+  color:rgba(255,255,255,0.7);
+  font-size:13px;
+  line-height:1.8;
+  padding-left:20px;
+  position:relative;
+  margin-bottom:4px;
+  transition:color 0.3s ease;
+}
+.problem-card:hover .expand-details li{
+  color:rgba(255,255,255,0.85);
+}
+.problem-card .expand-details li::before{
+  content:'→';
+  position:absolute;
+  left:0;
+  color:#00ffcc;
+  font-size:14px;
+}
+
+/* Mid content area */
+.mid{
+  position:relative;
+  pointer-events:none;
+  height:100%;
+  display:grid;
+  align-items:center;
+  justify-items:start;
+  grid-template-columns:1fr auto;
+  gap:60px;
+  padding:0 40px;
+}
+
+/* Copy stack */
+.copy-stack{
+  position:relative;
+  max-width:440px;
+}
+.copy{
+  position:absolute;
+  top:0;
+  left:0;
+  opacity:0;
+  transform:translateY(8px);
+  transition:all .5s cubic-bezier(.4,0,.2,1);
+}
+.copy.on{
+  opacity:1;
+  transform:translateY(0);
+}
+.eyebrow{
+  font-family:"JetBrains Mono",monospace;
+  font-size:12px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:#333;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:22px;
+  font-weight:600;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+}
+.eyebrow::before,
+.eyebrow::after{
+  content:"";
+  width:16px;
+  height:1px;
+  background:#333;
+  opacity:0.4;
+}
+.copy h1{
+  font-size:clamp(42px,5.5vw,74px);
+  font-weight:700;
+  letter-spacing:-.04em;
+  line-height:.96;
+  margin:0 0 24px;
+  color:#000;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.copy h1 em{
+  font-style:italic;
+  font-weight:600;
+}
+.copy h1 .accent{
+  color:#FF6B4A;
+  font-weight:800;
+  text-shadow: 0 2px 8px rgba(255,107,74,0.2);
+}
+.copy .sub{
+  font-size:18px;
+  line-height:1.6;
+  color:#333;
+  max-width:380px;
+  font-weight:500;
+}
+
+/* Side specs */
+.side{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  align-items:flex-start;
+}
+.specchip{
+  font-family:"JetBrains Mono",monospace;
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--ink-2);
+  padding:6px 10px;
+  border:1px solid var(--line);
+  border-radius:6px;
+  background:rgba(255,255,255,0.5);
+  backdrop-filter:blur(8px);
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+}
+.specchip:hover{
+  background:var(--bg);
+  border-color:var(--ink-2);
+  transform:translateX(4px);
+}
+.specchip strong{
+  color:var(--ink);
+  font-weight:600;
+}
+.specchip .dot{
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:var(--guardian);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{opacity:.5;transform:scale(1);}
+  50%{opacity:1;transform:scale(1.5);}
+}
+
+/* Landing page title */
+.landing-title{
+  position:absolute;
+  top:35%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  text-align:center;
+  z-index:6;
+  opacity:1;
+  transition:opacity 0.6s ease;
+  pointer-events:none;
+}
+.landing-title.hide{
+  opacity:0;
+  transform:translate(-50%, -60%);
+}
+.landing-title .main-title{
+  font-family:"Inter Tight", sans-serif;
+  font-size:clamp(60px, 10vw, 140px);
+  font-weight:800;
+  letter-spacing:-0.05em;
+  color:var(--ink);
+  margin:0;
+  line-height:1;
+  opacity:0;
+  transform:translateY(20px);
+  animation:titleFadeIn 1s ease-out 0.3s forwards;
+  text-shadow:0 2px 40px rgba(0,0,0,0.08);
+}
+.landing-title .subtitle{
+  font-family:"JetBrains Mono", monospace;
+  font-size:clamp(13px, 1.6vw, 18px);
+  font-weight:500;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:var(--ink-2);
+  margin-top:24px;
+  opacity:0;
+  transform:translateY(10px);
+  animation:titleFadeIn 0.8s ease-out 0.6s forwards;
+}
+
+@keyframes titleFadeIn{
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* Dark mode styles for stages 2, 3, 4 */
+.stage.dark .copy h1,
+.chrome.invert .copy h1 {
+  color:#FFFFFF;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+}
+.stage.dark .copy .sub,
+.chrome.invert .copy .sub {
+  color:rgba(255,255,255,0.9);
+}
+.stage.dark .eyebrow,
+.chrome.invert .eyebrow {
+  color:rgba(255,255,255,0.7);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+.stage.dark .copy h1 .accent,
+.chrome.invert .copy h1 .accent {
+  color:#00FFCC;
+  text-shadow: 0 0 30px rgba(0,255,204,0.4);
+}
+.stage.dark .eyebrow::before,
+.stage.dark .eyebrow::after,
+.chrome.invert .eyebrow::before,
+.chrome.invert .eyebrow::after {
+  background:rgba(255,255,255,0.3);
+}
+
+/* Dark mode for title */
+.stage.dark .landing-title .main-title{
+  color:#FFFFFF;
+}
+.stage.dark .landing-title .subtitle{
+  color:rgba(255,255,255,0.6);
+}
+
+/* Stage 2 focus - hide other content */
+.problem-cards.active ~ .mid {
+  opacity: 0.1;
+}
+
+/* Position cards centered for Stage 2 */
 #pc1{
-  top:55%;
-  left:15%;
+  top:45%;
+  left:20%;
+  transform:translateX(-50%) translateY(-50%);
+}
+#pc1.show{
+  transform:translateX(-50%) translateY(-50%) scale(1);
+  opacity:1;
 }
 #pc2{
-  top:60%;
+  top:45%;
   left:50%;
-  transform:translateX(-50%) translateY(0);
+  transform:translateX(-50%) translateY(-50%);
 }
 #pc2.show{
-  transform:translateX(-50%) scale(1);
+  transform:translateX(-50%) translateY(-50%) scale(1);
+  opacity:1;
 }
 #pc3{
-  top:55%;
-  right:15%;
+  top:45%;
+  left:80%;
+  transform:translateX(-50%) translateY(-50%);
+}
+#pc3.show{
+  transform:translateX(-50%) translateY(-50%) scale(1);
+  opacity:1;
 }
 
 /* Contact Form Section */

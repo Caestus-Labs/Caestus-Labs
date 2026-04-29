@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3D Scene Test</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: monospace;
+      background: #000;
+      color: #fff;
+    }
+    #info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 100;
+      background: rgba(0,0,0,0.8);
+      padding: 10px;
+      border-radius: 5px;
+    }
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="info">
+    <div id="status">Initializing...</div>
+  </div>
+  <canvas id="scene"></canvas>
+
+  <script type="importmap">
+  {
+    "imports":{
+      "three":"https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    const status = document.getElementById('status');
+
+    try {
+      status.innerHTML = 'Creating scene...';
+
+      // Setup
+      const canvas = document.getElementById('scene');
+      const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x222222);
+
+      const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.set(0, 0, 3);
+
+      // Add lights
+      const light1 = new THREE.DirectionalLight(0xffffff, 2);
+      light1.position.set(5, 5, 5);
+      scene.add(light1);
+
+      const light2 = new THREE.AmbientLight(0x404040);
+      scene.add(light2);
+
+      status.innerHTML = 'Loading model...';
+
+      // Load model
+      const loader = new GLTFLoader();
+      loader.load(
+        'assets/vr-headset.glb',
+        (gltf) => {
+          status.innerHTML = 'Model loaded! Rendering...';
+          scene.add(gltf.scene);
+
+          // Center and scale
+          const box = new THREE.Box3().setFromObject(gltf.scene);
+          const center = box.getCenter(new THREE.Vector3());
+          const size = box.getSize(new THREE.Vector3());
+
+          gltf.scene.position.x = -center.x;
+          gltf.scene.position.y = -center.y;
+          gltf.scene.position.z = -center.z;
+
+          const scale = 1.5 / Math.max(size.x, size.y, size.z);
+          gltf.scene.scale.setScalar(scale);
+
+          // Start render loop
+          function animate() {
+            requestAnimationFrame(animate);
+            gltf.scene.rotation.y += 0.005;
+            renderer.render(scene, camera);
+          }
+          animate();
+
+          status.innerHTML = '✓ Scene running!';
+        },
+        (progress) => {
+          const percent = (progress.loaded / progress.total * 100).toFixed(0);
+          status.innerHTML = `Loading model... ${percent}%`;
+        },
+        (error) => {
+          status.innerHTML = '✗ Error loading model: ' + error.message;
+          console.error(error);
+        }
+      );
+
+      // Handle resize
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+    } catch (error) {
+      status.innerHTML = '✗ Error: ' + error.message;
+      console.error(error);
+    }
+  </script>
+</body>
+</html>

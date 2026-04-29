@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Debug Test</title>
+  <style>
+    body { margin: 0; padding: 20px; font-family: monospace; background: #000; color: #0f0; }
+    pre { background: #111; padding: 10px; overflow-x: auto; }
+    .error { color: #f00; }
+    .success { color: #0f0; }
+  </style>
+</head>
+<body>
+  <h1>VR Experience Debug Test</h1>
+  <div id="results"></div>
+
+  <script type="importmap">
+  {
+    "imports":{
+      "three":"https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    const results = document.getElementById('results');
+
+    function log(msg, isError = false) {
+      const div = document.createElement('div');
+      div.className = isError ? 'error' : 'success';
+      div.textContent = msg;
+      results.appendChild(div);
+    }
+
+    // Test 1: Check if Three.js loads
+    try {
+      const { default: THREE } = await import('three');
+      log('✓ Three.js loaded successfully');
+      log(`  Version: ${THREE.REVISION}`);
+    } catch (e) {
+      log('✗ Failed to load Three.js: ' + e.message, true);
+    }
+
+    // Test 2: Check if GLB file is accessible
+    try {
+      const response = await fetch('assets/vr-headset.glb');
+      if (response.ok) {
+        log('✓ GLB model file accessible');
+        log(`  Size: ${(await response.blob()).size} bytes`);
+      } else {
+        log('✗ GLB model file not found', true);
+      }
+    } catch (e) {
+      log('✗ Failed to fetch GLB: ' + e.message, true);
+    }
+
+    // Test 3: Check if main script exists
+    try {
+      const response = await fetch('js/vr-experience.js');
+      if (response.ok) {
+        log('✓ Main script accessible');
+      } else {
+        log('✗ Main script not found', true);
+      }
+    } catch (e) {
+      log('✗ Failed to fetch script: ' + e.message, true);
+    }
+
+    // Test 4: Check canvas
+    setTimeout(() => {
+      const canvas = document.getElementById('scene');
+      if (canvas) {
+        log('✓ Canvas element found in main page');
+      } else {
+        log('✗ Canvas element not found in main page', true);
+      }
+    }, 100);
+
+    // Test 5: Check for console errors
+    window.addEventListener('error', (e) => {
+      log('✗ JavaScript Error: ' + e.message, true);
+    });
+  </script>
+</body>
+</html>

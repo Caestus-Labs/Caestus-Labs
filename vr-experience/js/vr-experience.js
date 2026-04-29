@@ -810,12 +810,18 @@ const problemCards = document.getElementById('problem-cards');
 const pc1 = document.getElementById('pc1');
 const pc2 = document.getElementById('pc2');
 const pc3 = document.getElementById('pc3');
+const landingTitle = document.getElementById('landing-title');
 
 function updateUI(p){
   bar.style.setProperty('--p', (p*100).toFixed(1) + '%');
 
   // 4 stages now: 0-25%, 25-50%, 50-75%, 75-100%
   const stage = p < 0.25 ? 1 : p < 0.50 ? 2 : p < 0.75 ? 3 : 4;
+
+  // Control landing title visibility - only show on Stage 1
+  if (landingTitle) {
+    landingTitle.classList.toggle('hide', stage !== 1);
+  }
 
   // Update progress labels
   l1.classList.toggle('active', stage===1);
@@ -828,12 +834,21 @@ function updateUI(p){
     el.classList.toggle('active', +el.dataset.s === stage);
   });
 
-  // Show copy - map stages to copy sections
+  // Show copy - map stages to copy sections (hide during stage 2)
   let activeCopy = stage;
   const inTransition = (p > 0.22 && p < 0.28) || (p > 0.47 && p < 0.53) || (p > 0.72 && p < 0.78);
+  const inStage2 = stage === 2;
+
   copies.forEach(el=>{
-    el.classList.toggle('on', !inTransition && +el.dataset.copy === activeCopy);
+    // Don't show copy during stage 2 (problem cards stage)
+    el.classList.toggle('on', !inTransition && !inStage2 && +el.dataset.copy === activeCopy);
   });
+
+  // Hide side specs during stage 2
+  const sideEl = document.querySelector('.side');
+  if (sideEl) {
+    sideEl.style.opacity = inStage2 ? '0' : '1';
+  }
 
   // Invert colors for inside VR stage
   chrome.classList.toggle('invert', p > 0.75);
@@ -841,7 +856,6 @@ function updateUI(p){
   midEl.classList.toggle('stage4', p >= 0.90);
 
   // Show problem cards during stage 2
-  const inStage2 = p >= 0.25 && p < 0.50;
   problemCards.classList.toggle('active', inStage2);
 
   if (inStage2) {
