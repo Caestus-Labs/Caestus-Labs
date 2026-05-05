@@ -70,18 +70,24 @@ const cubeMat = new THREE.MeshStandardMaterial({
 const uniforms = {
   uTime: { value: 0 },
   uCursor: { value: new THREE.Vector3(0, 0, 0) },
-  uSigma: { value: 1.8 }
+  uSigma: { value: 4.0 },
+  uRippleSpeed: { value: 1.4 },
+  uRippleFreq: { value: 3.2 }
 }
 
 cubeMat.onBeforeCompile = (shader) => {
   shader.uniforms.uTime = uniforms.uTime
   shader.uniforms.uCursor = uniforms.uCursor
   shader.uniforms.uSigma = uniforms.uSigma
+  shader.uniforms.uRippleSpeed = uniforms.uRippleSpeed
+  shader.uniforms.uRippleFreq = uniforms.uRippleFreq
   shader.vertexShader =
     `
     uniform float uTime;
     uniform vec3 uCursor;
     uniform float uSigma;
+    uniform float uRippleSpeed;
+    uniform float uRippleFreq;
     attribute float aSeed;
     varying float vLift;
   ` + shader.vertexShader.replace(
@@ -90,19 +96,36 @@ cubeMat.onBeforeCompile = (shader) => {
       vec3 transformed = vec3(position);
       vec4 worldPos = instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0);
       vec3 pxyz = worldPos.xyz;
-      float d = distance(pxyz, uCursor);
-      float f = exp(-(d*d) / (uSigma*uSigma));
 
-      float baseWave = sin(uTime * 0.8 + aSeed * 6.2831 + pxyz.x * 0.3) * 0.08
-                     + sin(uTime * 0.5 + aSeed * 3.0 + pxyz.z * 0.2) * 0.05
-                     + cos(uTime * 1.2 + aSeed * 4.7) * 0.03;
+      // Distance on the floor plane only — keeps ripples reading as concentric
+      // rings on the surface even for sky/sphere cubes.
+      vec2 toCursor = pxyz.xz - uCursor.xz;
+      float d = length(toCursor);
 
-      float lift = baseWave + f * 0.6 + f * sin(uTime*2.5 + d*2.0) * 0.15;
+      // Gaussian envelope — wide and soft, fades the ripple far from cursor.
+      float env = exp(-(d*d) / (uSigma*uSigma));
 
-      transformed += normalize(pxyz - uCursor) * f * 0.25;
-      transformed.y += lift;
+      // Slow ambient swell so the field breathes when nothing's happening.
+      float baseWave = sin(uTime * 0.45 + aSeed * 6.2831 + pxyz.x * 0.22) * 0.05
+                     + sin(uTime * 0.30 + aSeed * 3.0    + pxyz.z * 0.16) * 0.035;
 
-      float rotAngle = f * sin(uTime + aSeed * 3.14) * 0.5;
+      // Outgoing traveling wave: phase = d*k - t*omega so crests march away
+      // from cursor. Two harmonics give a softer, water-like beat.
+      float phase  = d * uRippleFreq - uTime * uRippleSpeed * uRippleFreq;
+      float ripple = sin(phase) * 0.22
+                   + sin(phase * 0.5 - uTime * 0.6) * 0.10;
+      ripple *= env;
+
+      float lift = baseWave + ripple;
+
+      // Gentle radial nudge inward so cubes near the cursor lean toward the
+      // ring crest instead of jumping vertically.
+      vec2 radial = d > 0.0001 ? toCursor / d : vec2(0.0);
+      transformed.xz += radial * env * sin(phase) * 0.05;
+      transformed.y  += lift;
+
+      // Slight twist near the cursor — keeps the surface alive without spikes.
+      float rotAngle = env * sin(uTime * 0.6 + aSeed * 3.14) * 0.25;
       mat2 rot = mat2(cos(rotAngle), -sin(rotAngle), sin(rotAngle), cos(rotAngle));
       transformed.xz = rot * transformed.xz;
 
@@ -188,19 +211,74 @@ cubeMesh.instanceMatrix.needsUpdate = true
 scene.add(cubeMesh)
 
 // ---------- Cursor → world point ----------
+// Lower damping = ripple trails the pointer. ~0.06 looks like syrup;
+// 0.18 was near-instant.
 const mouse = { x: 0, y: 0, tx: 0, ty: 0 }
-const DAMPING = 0.18
+const DAMPING = 0.06
+
+let lastPointerAt = 0
+const POINTER_PRIORITY_MS = 1500
 
 window.addEventListener('pointermove', (e) => {
   mouse.tx = (e.clientX / window.innerWidth) * 2 - 1
   mouse.ty = -((e.clientY / window.innerHeight) * 2 - 1)
+  lastPointerAt = performance.now()
 }, { passive: true })
 
-window.addEventListener('deviceorientation', (e) => {
-  if (e.gamma == null) return
-  mouse.tx = (e.gamma / 45) * 0.5
-  mouse.ty = (e.beta / 45) * 0.5
-})
+// Touchmove fires even when pointermove is throttled on some Android browsers.
+window.addEventListener('touchmove', (e) => {
+  const t = e.touches[0]
+  if (!t) return
+  mouse.tx = (t.clientX / window.innerWidth) * 2 - 1
+  mouse.ty = -((t.clientY / window.innerHeight) * 2 - 1)
+  lastPointerAt = performance.now()
+}, { passive: true })
+
+function onOrientation(e) {
+  if (e.gamma == null || e.beta == null) return
+  // If the user is actively dragging, let the finger lead — gyro takes over
+  // again after POINTER_PRIORITY_MS of stillness.
+  if (performance.now() - lastPointerAt < POINTER_PRIORITY_MS) return
+
+  // Map raw beta/gamma to screen-aligned tilt so landscape (Android) feels
+  // the same as portrait. screen.orientation.angle is 0/90/180/270.
+  const angle = (screen.orientation && screen.orientation.angle) || window.orientation || 0
+  let gx, gy
+  switch (angle) {
+    case 90:  gx =  e.beta;   gy = -e.gamma; break
+    case -90:
+    case 270: gx = -e.beta;   gy =  e.gamma; break
+    case 180: gx = -e.gamma;  gy = -e.beta;  break
+    default:  gx =  e.gamma;  gy =  e.beta;  break
+  }
+  mouse.tx = Math.max(-1, Math.min(1, (gx / 45) * 0.6))
+  mouse.ty = Math.max(-1, Math.min(1, (gy / 45) * 0.6))
+}
+
+// iOS 13+ requires explicit permission, granted from a user gesture.
+const NeedsOrientationPermission =
+  typeof DeviceOrientationEvent !== 'undefined' &&
+  typeof DeviceOrientationEvent.requestPermission === 'function'
+
+if (NeedsOrientationPermission) {
+  const ask = async () => {
+    try {
+      const res = await DeviceOrientationEvent.requestPermission()
+      if (res === 'granted') {
+        window.addEventListener('deviceorientation', onOrientation)
+      }
+    } catch {
+      // user denied or non-secure context — fall back to touch only
+    } finally {
+      window.removeEventListener('touchend', ask)
+      window.removeEventListener('click', ask)
+    }
+  }
+  window.addEventListener('touchend', ask, { once: true, passive: true })
+  window.addEventListener('click', ask, { once: true })
+} else {
+  window.addEventListener('deviceorientation', onOrientation)
+}
 
 // ---------- Resize ----------
 function resize() {
