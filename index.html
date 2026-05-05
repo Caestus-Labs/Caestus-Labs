@@ -84,7 +84,11 @@
       }
     }
   </script>
-  <script src="/js/config.js"></script>
+  <script>
+    // Supabase publishable anon key — safe to ship; RLS on `contacts` gates writes.
+    window.SUPABASE_URL = 'https://evpoxdrluvihryvqhraz.supabase.co'
+    window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2cG94ZHJsdXZpaHJ5dnFocmF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyOTAwMjMsImV4cCI6MjA5Mjg2NjAyM30.H2dU0ZvzgtWTA1ZC0lzczDb7vd6fBH4vJQMj8pTJss4'
+  </script>
   <script type="module" src="/js/cubes.js"></script>
   <script type="module" src="/js/interest-form.js"></script>
   <script src="/js/modal.js" defer></script>
