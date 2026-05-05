@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Caestus Labs — Vision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/shared.css">
+<style>
+  body{background:#0a0a0c}
+
+  .v-hero{
+    min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+    padding:120px 40px 80px;max-width:1440px;margin:0 auto;position:relative;
+  }
+  .v-hero h1{margin:24px 0 0;font-size:clamp(64px,11vw,196px);letter-spacing:-.04em;line-height:.88;font-weight:700;max-width:14ch}
+  .v-hero h1 em{font-style:italic;font-weight:400;color:var(--fg-2)}
+  .v-hero h1 .accent{color:var(--accent)}
+  .v-hero .sub{margin-top:48px;font-size:20px;line-height:1.5;color:var(--fg-2);max-width:54ch}
+  .v-hero .scrollhint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-3);display:flex;align-items:center;gap:12px}
+  .v-hero .scrollhint i{display:block;width:1px;height:32px;background:var(--fg-3);animation:dropline 2s ease-in-out infinite}
+  @keyframes dropline{0%,100%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1)}}
+
+  .v-hero .ambient{
+    position:absolute;right:40px;top:50%;transform:translateY(-50%);
+    width:360px;height:360px;pointer-events:none;opacity:.5;
+  }
+  @media(max-width:980px){.v-hero .ambient{display:none}}
+  .v-hero .ambient::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(circle at 50% 50%, rgba(255,72,39,.4) 0%, transparent 60%);
+    animation:breathe 5s ease-in-out infinite;
+  }
+  @keyframes breathe{0%,100%{transform:scale(.85);opacity:.8}50%{transform:scale(1.1);opacity:1}}
+  .v-hero .ambient .ring{position:absolute;inset:0;border:1px solid rgba(255,72,39,.4);border-radius:50%;animation:expand 4s ease-out infinite}
+  .v-hero .ambient .ring:nth-child(2){animation-delay:1.3s}
+  .v-hero .ambient .ring:nth-child(3){animation-delay:2.6s}
+  @keyframes expand{0%{transform:scale(.4);opacity:.7}100%{transform:scale(1.4);opacity:0}}
+
+  .manifesto{
+    padding:160px 40px;max-width:1100px;margin:0 auto;text-align:left;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .manifesto .eyebrow{margin-bottom:32px}
+  .manifesto p{
+    font-family:var(--font-display);font-size:clamp(24px,3vw,42px);font-weight:400;
+    letter-spacing:-.01em;line-height:1.25;margin:0 0 32px;color:var(--fg);
+  }
+  .manifesto p em{font-style:italic;color:var(--fg-2)}
+  .manifesto p .accent{color:var(--accent)}
+  .manifesto .by{font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-3);margin-top:48px}
+
+  .timeline{padding:120px 40px;max-width:1440px;margin:0 auto}
+  .timeline .head{display:flex;justify-content:space-between;align-items:flex-end;gap:48px;margin-bottom:80px;flex-wrap:wrap}
+  .timeline h2{margin:0;font-size:clamp(36px,5vw,72px);font-weight:700;letter-spacing:-.02em;line-height:1;max-width:14ch}
+  .timeline .sub{max-width:36ch;color:var(--fg-2);font-size:16px;line-height:1.55}
+
+  .tl-track{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--fg-3)}
+  @media(max-width:980px){.tl-track{grid-template-columns:1fr}}
+  .tl-step{position:relative;padding:32px 24px 32px 0;border-right:1px dashed var(--line)}
+  .tl-step:last-child{border-right:0}
+  .tl-step::before{content:"";position:absolute;top:-7px;left:0;width:13px;height:13px;border-radius:50%;background:var(--bg);border:2px solid var(--fg-3);transition:all .3s}
+  .tl-step.now::before{border-color:var(--accent);background:var(--accent);box-shadow:0 0 0 6px rgba(255,72,39,.15)}
+  .tl-step .yr{font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-3);margin-bottom:12px}
+  .tl-step.now .yr{color:var(--accent)}
+  .tl-step h3{margin:0 0 12px;font-size:24px;font-weight:600;letter-spacing:-.01em;line-height:1.1}
+  .tl-step p{margin:0;color:var(--fg-2);font-size:14px;line-height:1.55;max-width:30ch}
+  .tl-step .stat{margin-top:16px;font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-3)}
+
+  .uses{padding:120px 0;border-top:1px solid var(--line)}
+  .uses .head{padding:0 40px;max-width:1440px;margin:0 auto 80px;display:flex;justify-content:space-between;align-items:flex-end;gap:48px;flex-wrap:wrap}
+  .uses h2{margin:0;font-size:clamp(40px,6vw,96px);font-weight:700;letter-spacing:-.025em;line-height:.95;max-width:12ch}
+  .uses h2 em{font-style:italic;color:var(--fg-2)}
+  .uses .sub{max-width:36ch;color:var(--fg-2);font-size:16px;line-height:1.55}
+
+  .use-list{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+  .use-row{
+    display:grid;grid-template-columns:90px 1.4fr 1fr 1fr 90px;gap:32px;
+    padding:48px 40px;border-bottom:1px solid var(--line);
+    align-items:center;transition:background .3s;cursor:pointer;
+    max-width:1440px;margin:0 auto;width:100%;
+  }
+  @media(max-width:980px){.use-row{grid-template-columns:1fr;gap:16px;padding:32px 24px}.use-row .visual{display:none}}
+  .use-row:hover{background:var(--bg-2)}
+  .use-row .num{font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+  .use-row .title{display:flex;flex-direction:column;gap:8px}
+  .use-row .title h3{margin:0;font-size:clamp(28px,3vw,48px);font-weight:600;letter-spacing:-.02em;line-height:1}
+  .use-row .title .sector{font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-3)}
+  .use-row .pitch{color:var(--fg-2);font-size:15px;line-height:1.5}
+  .use-row .specs{display:flex;flex-direction:column;gap:6px;font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-3)}
+  .use-row .specs strong{color:var(--fg);font-weight:500}
+  .use-row .visual{
+    aspect-ratio:1/1;background:#101013;border:1px solid var(--line);
+    position:relative;overflow:hidden;align-self:stretch;
+  }
+  .use-row .visual svg{width:100%;height:100%;display:block}
+
+  .closer{padding:160px 40px;text-align:center;border-top:1px solid var(--line);position:relative;overflow:hidden}
+  .closer h2{margin:0 0 32px;font-size:clamp(48px,8vw,144px);font-weight:700;letter-spacing:-.03em;line-height:.95}
+  .closer h2 em{font-style:italic;color:var(--fg-2)}
+  .closer h2 .accent{color:var(--accent)}
+  .closer .sub{font-size:18px;color:var(--fg-2);max-width:48ch;margin:0 auto 48px;line-height:1.5}
+  .closer a{display:inline-block;padding:18px 40px;border:1px solid var(--fg);font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;transition:all .2s}
+  .closer a:hover{background:var(--fg);color:var(--bg)}
+
+  .variants{
+    position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:40;
+    display:flex;border:1px solid var(--line);background:rgba(15,15,18,.95);
+    backdrop-filter:blur(8px);border-radius:2px;padding:4px;
+    font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  }
+  .variants button{background:none;border:0;color:var(--fg-2);padding:8px 16px;cursor:pointer;font-family:inherit;font-size:inherit;letter-spacing:inherit;text-transform:inherit}
+  .variants button:hover{color:var(--fg)}
+  .variants button.active{background:var(--fg);color:var(--bg)}
+
+  body[data-v="b"] .manifesto{padding:120px 40px}
+  body[data-v="b"] .manifesto .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;margin-top:48px}
+  body[data-v="b"] .manifesto .pillars > div{border-top:2px solid var(--accent);padding-top:24px}
+  body[data-v="b"] .manifesto p{display:none}
+  body[data-v="b"] .manifesto .pillars-show{display:block}
+  body[data-v="b"] .manifesto .pillars h3{margin:0 0 16px;font-size:24px;font-weight:600;letter-spacing:-.01em}
+  body[data-v="b"] .manifesto .pillars p{display:block;font-size:16px;line-height:1.55;color:var(--fg-2);font-family:var(--font-body);margin:0}
+
+  body[data-v="a"] .manifesto .pillars{display:none}
+  body[data-v="c"] .manifesto .pillars{display:none}
+
+  body[data-v="c"] .timeline{display:none}
+
+  @media(max-width:980px){body[data-v="b"] .manifesto .pillars{grid-template-columns:1fr}}
+</style>
+</head>
+<body data-v="a">
+<div class="grain"></div>
+
+<nav class="cl-nav">
+  <a href="/" class="brand">CAESTUS</a>
+  <nav>
+    <a href="/problem/">Problem</a>
+    <a href="/product/">Product</a>
+    <a href="/team/">Team</a>
+    <a href="/vision/" class="active">Vision</a>
+    <a href="/contact/">Contact</a>
+  </nav>
+  <a href="/contact/" class="access">Request Access →</a>
+</nav>
+
+<div class="variants">
+  <button class="active" data-v="a">A · Manifesto</button>
+  <button data-v="b">B · Pillars</button>
+  <button data-v="c">C · Industries</button>
+</div>
+
+<section class="v-hero">
+  <div class="ambient"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div>
+  <div class="eyebrow">006 / Vision</div>
+  <h1>The next<br>thing the body<br><em>will</em> <span class="accent">touch.</span></h1>
+  <p class="sub">For two decades, screens defined how we entered virtual space. The next decade is about how it enters us. Caestus is the first surface — there will be many more.</p>
+  <div class="scrollhint">Scroll <i></i></div>
+</section>
+
+<section class="manifesto">
+  <div class="eyebrow">Where we're going</div>
+
+  <p>We're not building a peripheral. We're building <em>the haptic layer</em> — the missing third channel between sight, sound, and the world your body is actually in.</p>
+  <p>Today: forty-eight clutch points across the upper body. <em>Tomorrow:</em> every centimeter of skin, every joint, every grip — addressable, fast, light enough to forget.</p>
+  <p>The endpoint isn't a better game. It's <span class="accent">a body that can move freely between worlds</span>, and a virtual world that finally treats the body like it's there.</p>
+
+  <div class="pillars-show pillars">
+    <div>
+      <h3>Presence</h3>
+      <p>The world should push back. Force, friction, weight, recoil — read by the same nerves that read reality. Sub-4ms or it's not real.</p>
+    </div>
+    <div>
+      <h3>Embodiment</h3>
+      <p>The hardware should disappear. 980g today, 400g by 2028, a layer under your shirt by 2032. The body wears it; the body forgets it.</p>
+    </div>
+    <div>
+      <h3>Openness</h3>
+      <p>One protocol, every engine, every headset. Every developer can write force. The web of haptics, not another walled garden.</p>
+    </div>
+  </div>
+
+  <div class="by">— Caestus Labs · founding doc · 2024</div>
+</section>
+
+<section class="timeline">
+  <div class="head">
+    <h2>The road, sketched.</h2>
+    <p class="sub">A roadmap, not a promise. We're shipping, learning, then shipping the next thing harder. Here's the shape of it.</p>
+  </div>
+  <div class="tl-track">
+    <div class="tl-step now">
+      <div class="yr">2026 · Now</div>
+      <h3>MK1 Upper-Body</h3>
+      <p>48 clutch nodes. Carbon shell. Quest 3 native. Developer kits ship Q4.</p>
+      <div class="stat">980g · 48 nodes · &lt;4ms</div>
+    </div>
+    <div class="tl-step">
+      <div class="yr">2028</div>
+      <h3>MK2 Full-Body</h3>
+      <p>Lower body added. 120+ nodes. Untethered. Sub-1.5kg total. Consumer pricing.</p>
+      <div class="stat">1.4kg · 120 nodes · &lt;3ms</div>
+    </div>
+    <div class="tl-step">
+      <div class="yr">2030</div>
+      <h3>Skin Layer</h3>
+      <p>Caestus Weave. Worn under clothing. Per-cm² addressing. Texture and temperature.</p>
+      <div class="stat">220g · 800 nodes · 1ms</div>
+    </div>
+    <div class="tl-step">
+      <div class="yr">203X</div>
+      <h3>Disappearance</h3>
+      <p>The hardware vanishes into garments. The protocol becomes infrastructure. The body is the screen.</p>
+      <div class="stat">— · ∞ nodes · imperceptible</div>
+    </div>
+  </div>
+</section>
+
+<section class="uses">
+  <div class="head">
+    <h2>What it's <em>for.</em></h2>
+    <p class="sub">Six industries already in our pilot pipeline. Each one needs the same thing: training, presence, or skill — that the body has to learn, not just the eyes.</p>
+  </div>
+
+  <div class="use-list">
+    <div class="use-row">
+      <div class="num">01 / Med</div>
+      <div class="title">
+        <span class="sector">Surgical Training</span>
+        <h3>Scalpel before flesh.</h3>
+      </div>
+      <div class="pitch">Residents practice tissue-handling, suturing, and palpation in VR with felt resistance. Reps without cadavers, mistakes without patients.</div>
+      <div class="specs"><span><strong>4×</strong> faster skill acquisition</span><span><strong>$48k</strong> avg cadaver cost</span><span>Pilot · Stanford Med</span></div>
+      <div class="visual">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="22" fill="none" stroke="#3a3a40" stroke-width=".8"/><path d="M30 50 L70 50 M50 30 L50 70" stroke="#ff4827" stroke-width="1"/><circle cx="50" cy="50" r="3" fill="#ff4827"/><text x="50" y="92" font-family="JetBrains Mono" font-size="6" fill="#5a5a55" text-anchor="middle" letter-spacing="1">MED-001</text></svg>
+      </div>
+    </div>
+
+    <div class="use-row">
+      <div class="num">02 / Mil</div>
+      <div class="title">
+        <span class="sector">Defense Simulation</span>
+        <h3>Recoil, weight, breach.</h3>
+      </div>
+      <div class="pitch">Squad-level training where the rifle weighs the rifle, the door pushes back, the explosion shoves your shoulder. Hours where deployments cost millions.</div>
+      <div class="specs"><span><strong>$2.1B</strong> sim training market</span><span><strong>14×</strong> retention vs screen</span><span>Pilot · DARPA</span></div>
+      <div class="visual">
+        <svg viewBox="0 0 100 100"><rect x="20" y="20" width="60" height="60" fill="none" stroke="#3a3a40" stroke-width=".8"/><path d="M20 50 L80 50 M50 20 L50 80" stroke="#3a3a40" stroke-width=".5"/><path d="M50 50 L75 25" stroke="#ff4827" stroke-width="1.5"/><circle cx="50" cy="50" r="3" fill="#ff4827"/><text x="50" y="92" font-family="JetBrains Mono" font-size="6" fill="#5a5a55" text-anchor="middle" letter-spacing="1">MIL-002</text></svg>
+      </div>
+    </div>
+
+    <div class="use-row">
+      <div class="num">03 / Ind</div>
+      <div class="title">
+        <span class="sector">Industrial &amp; Aerospace</span>
+        <h3>Assemble before fab.</h3>
+      </div>
+      <div class="pitch">Engineers feel the torque of a wrench, the snap of a clip, the fit of a panel — before any metal is cut. Tolerance training, ergonomic review, factory rehearsal.</div>
+      <div class="specs"><span><strong>$8.2B</strong> digital twin market</span><span><strong>22%</strong> defect reduction</span><span>Pilot · Boeing</span></div>
+      <div class="visual">
+        <svg viewBox="0 0 100 100"><polygon points="50,15 85,50 50,85 15,50" fill="none" stroke="#3a3a40" stroke-width=".8"/><polygon points="50,30 70,50 50,70 30,50" fill="none" stroke="#ff4827" stroke-width="1"/><circle cx="50" cy="50" r="2" fill="#ff4827"/><text x="50" y="95" font-family="JetBrains Mono" font-size="6" fill="#5a5a55" text-anchor="middle" letter-spacing="1">IND-003</text></svg>
+      </div>
+    </div>
+
+    <div class="use-row">
+      <div class="num">04 / Phy</div>
+      <div class="title">
+        <span class="sector">Rehabilitation</span>
+        <h3>Re-teach the arm.</h3>
+      </div>
+      <div class="pitch">Stroke recovery and orthopedic rehab with measurable, repeatable resistance — at home, monitored remotely, gamified into compliance.</div>
+      <div class="specs"><span><strong>795k</strong> US strokes/yr</span><span><strong>3×</strong> at-home compliance</span><span>Pilot · Mayo Clinic</span></div>
+      <div class="visual">
+        <svg viewBox="0 0 100 100"><path d="M20 70 Q50 30 80 70" fill="none" stroke="#3a3a40" stroke-width=".8"/><path d="M20 70 Q50 50 80 70" fill="none" stroke="#ff4827" stroke-width="1" stroke-dasharray="2 2"/><circle cx="20" cy="70" r="3" fill="#ff4827"/><circle cx="80" cy="70" r="3" fill="#ff4827"/><text x="50" y="92" font-family="JetBrains Mono" font-size="6" fill="#5a5a55" text-anchor="middle" letter-spacing="1">PHY-004</text></svg>
+      </div>
+    </div>
+
+    <div class="use-row">
+      <div class="num">05 / Ent</div>
+      <div class="title">
+        <span class="sector">Gaming &amp; Entertainment</span>
+        <h3>The world hits back.</h3>
+      </div>
+      <div class="pitch">Punch a wall and feel the wall. Pull a bowstring and feel the string. The first generation of games designed for a body that can be touched.</div>
+      <div class="specs"><span><strong>34M</strong> Quest 3 owners</span><span><strong>$184B</strong> games market</span><span>Partner · 4 studios</span></div>
+      <div class="visual">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" fill="none" stroke="#3a3a40" stroke-width=".8"/><circle cx="50" cy="50" r="20" fill="none" stroke="#ff4827" stroke-width="1"/><circle cx="50" cy="50" r="10" fill="none" stroke="#ff4827" stroke-width="1.5"/><circle cx="50" cy="50" r="3" fill="#ff4827"/><text x="50" y="92" font-family="JetBrains Mono" font-size="6" fill="#5a5a55" text-anchor="middle" letter-spacing="1">ENT-005</text></svg>
+      </div>
+    </div>
+
+    <div class="use-row">
+      <div class="num">06 / Tel</div>
+      <div class="title">
+        <span class="sector">Remote Physical Presence</span>
+        <h3>Hand someone a tool.</h3>
+      </div>
+      <div class="pitch">Telepresence with felt force. A senior surgeon guides a junior's hand from across the world. A grandparent feels their grandchild squeeze back.</div>
+      <div class="specs"><span><strong>1.2B</strong> remote workers</span><span><strong>96ms</strong> bidirectional latency</span><span>R&amp;D · Caestus Lab</span></div>
+      <div class="visual">
+        <svg viewBox="0 0 100 100"><circle cx="30" cy="50" r="10" fill="none" stroke="#3a3a40" stroke-width=".8"/><circle cx="70" cy="50" r="10" fill="none" stroke="#3a3a40" stroke-width=".8"/><path d="M40 50 L60 50" stroke="#ff4827" stroke-width="1.2" stroke-dasharray="2 2"/><circle cx="30" cy="50" r="2" fill="#ff4827"/><circle cx="70" cy="50" r="2" fill="#ff4827"/><text x="50" y="92" font-family="JetBrains Mono" font-size="6" fill="#5a5a55" text-anchor="middle" letter-spacing="1">TEL-006</text></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="closer">
+  <div class="eyebrow" style="margin-bottom:32px;color:var(--fg-3)">Last thing</div>
+  <h2>Be the first to<br><em>feel</em> <span class="accent">the future.</span></h2>
+  <p class="sub">Limited developer kits available. Join early access and shape what the next layer of reality feels like.</p>
+  <a href="/contact/">Request Access →</a>
+</section>
+
+<footer class="cl-foot">
+  <div class="row">
+    <div style="font-family:var(--font-display);font-weight:700;font-size:14px;letter-spacing:.04em;color:var(--fg)">CAESTUS</div>
+    <div style="display:flex;gap:28px;flex-wrap:wrap">
+      <a href="/vision/">Vision</a><a href="/product/">Product</a><a href="/problem/">Problem</a><a href="/team/">Team</a><a href="/contact/">Contact</a>
+    </div>
+    <div style="display:flex;gap:24px"><a>X</a><a>Instagram</a><a>LinkedIn</a></div>
+  </div>
+  <div class="credit">Caestus Labs / 2026 / Built in Ontario</div>
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.variants button');
+  buttons.forEach(b => b.addEventListener('click', () => {
+    buttons.forEach(x => x.classList.toggle('active', x === b));
+    document.body.dataset.v = b.dataset.v;
+  }));
+</script>
+</body>
+</html>

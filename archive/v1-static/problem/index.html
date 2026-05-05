@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Caestus Labs — The Problem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/shared.css">
+<style>
+  body{background:#0a0a0c}
+
+  main{max-width:1280px;margin:0 auto;padding:160px 40px 96px}
+
+  .hero{display:grid;grid-template-columns:1fr;gap:32px;padding-bottom:96px;border-bottom:1px solid var(--line)}
+  .hero h1{margin:24px 0 0;font-size:clamp(56px,8.5vw,128px);letter-spacing:-.03em;line-height:.94;font-weight:700;text-wrap:balance}
+  .hero h1 em{font-style:italic;font-weight:400;color:var(--fg-2)}
+  .hero h1 .accent{color:var(--accent)}
+  .hero .lede{margin-top:16px;font-size:20px;line-height:1.55;color:var(--fg-2);max-width:60ch}
+
+  .statement{padding:96px 0;border-bottom:1px solid var(--line)}
+  .statement .label{font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:32px;display:flex;gap:10px;align-items:center}
+  .statement .label i{width:24px;height:1px;background:var(--accent);display:inline-block}
+  .statement p{margin:0 0 24px;font-size:clamp(22px,2.4vw,32px);line-height:1.4;color:var(--fg);max-width:30ch;font-weight:400;letter-spacing:-.01em}
+  .statement p:last-child{color:var(--fg-2);margin-bottom:0}
+  .statement p .accent{color:var(--accent)}
+  .statement p em{font-style:italic;color:var(--fg-2)}
+
+  .points{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
+  @media(max-width:880px){.points{grid-template-columns:1fr}}
+  .point{background:var(--bg);padding:64px 40px;display:flex;flex-direction:column;gap:20px;min-height:300px}
+  .point .num{font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+  .point h3{margin:0;font-size:28px;font-weight:600;letter-spacing:-.015em;line-height:1.1}
+  .point p{margin:0;color:var(--fg-2);font-size:15px;line-height:1.55;max-width:36ch}
+
+  .landscape{padding:120px 0;border-bottom:1px solid var(--line)}
+  .landscape .label{font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:32px;display:flex;gap:10px;align-items:center}
+  .landscape .label i{width:24px;height:1px;background:var(--accent);display:inline-block}
+  .lh{margin:0 0 56px;font-size:clamp(32px,4.5vw,64px);font-weight:700;letter-spacing:-.025em;line-height:1.02;text-wrap:balance}
+  .lh em{font-style:italic;color:var(--fg-2);font-weight:400}
+  .lh .accent{color:var(--accent)}
+
+  .chart{position:relative;border:1px solid var(--line);background:#050507;aspect-ratio:16/10;width:100%;font-family:var(--font-mono)}
+  .chart .axis-y{position:absolute;left:0;top:0;bottom:40px;width:64px;display:flex;flex-direction:column;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-3);padding:16px 0;writing-mode:vertical-rl;transform:rotate(180deg)}
+  .chart .axis-y .ttl{font-size:10px;color:var(--fg-2);letter-spacing:.22em}
+  .chart .axis-x{position:absolute;left:64px;right:16px;bottom:0;height:40px;display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-3);padding:0 16px}
+  .chart .axis-x .ttl{font-size:10px;color:var(--fg-2);letter-spacing:.22em}
+  .chart .plot{position:absolute;left:64px;right:16px;top:16px;bottom:40px;border-left:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .chart .plot::before,.chart .plot::after{content:"";position:absolute;background:var(--line)}
+  .chart .plot::before{left:0;right:0;top:50%;height:1px}
+  .chart .plot::after{top:0;bottom:0;left:50%;width:1px}
+  .chart .quad{position:absolute;width:50%;height:50%;font-family:var(--font-mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-3);padding:14px 16px}
+  .chart .quad.tl{top:0;left:0}
+  .chart .quad.tr{top:0;right:0;text-align:right}
+  .chart .quad.bl{bottom:0;left:0}
+  .chart .quad.br{bottom:0;right:0;text-align:right}
+  .chart .quad b{display:block;font-weight:400;color:var(--fg-2);margin-bottom:4px}
+  .chart .pt{position:absolute;transform:translate(-50%,50%);display:flex;align-items:center;gap:10px}
+  .chart .pt .node{width:14px;height:14px;border-radius:50%;background:var(--fg-2);border:2px solid var(--bg);box-shadow:0 0 0 1px var(--fg-2);flex-shrink:0;position:relative}
+  .chart .pt.us .node{background:var(--accent);box-shadow:0 0 0 1px var(--accent),0 0 0 8px rgba(255,72,39,.18),0 0 0 18px rgba(255,72,39,.06);width:18px;height:18px;animation:beat 2.4s ease-in-out infinite}
+  @keyframes beat{0%,100%{box-shadow:0 0 0 1px var(--accent),0 0 0 8px rgba(255,72,39,.18),0 0 0 18px rgba(255,72,39,.06)}50%{box-shadow:0 0 0 1px var(--accent),0 0 0 12px rgba(255,72,39,.22),0 0 0 26px rgba(255,72,39,.08)}}
+  .chart .pt .lbl{font-family:var(--font-body);font-size:13px;color:var(--fg);font-weight:500;letter-spacing:-.005em;white-space:nowrap}
+  .chart .pt .lbl small{display:block;font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-3);font-weight:400;margin-top:2px}
+  .chart .pt.us .lbl{color:var(--accent)}
+  .chart .pt.left .lbl{order:-1;text-align:right}
+
+  @media(max-width:720px){
+    .chart{aspect-ratio:1/1.05}
+    .chart .pt .lbl{font-size:11px}
+    .chart .pt .lbl small{font-size:8px}
+  }
+
+  .grid-note{margin:32px 0 0;font-size:15px;line-height:1.55;color:var(--fg-2);max-width:60ch}
+  .grid-note em{font-style:italic;color:var(--fg)}
+
+  .diff{padding:120px 0;border-bottom:1px solid var(--line)}
+  .diff .label{font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:48px;display:flex;gap:10px;align-items:center}
+  .diff .label i{width:24px;height:1px;background:var(--accent);display:inline-block}
+
+  .diff-row{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line)}
+  @media(max-width:880px){.diff-row{grid-template-columns:1fr}}
+  .diff-side{padding:48px 40px;display:flex;flex-direction:column;gap:24px}
+  .diff-side.them{border-right:1px solid var(--line);background:var(--bg-2)}
+  @media(max-width:880px){.diff-side.them{border-right:0;border-bottom:1px solid var(--line)}}
+  .side-head{display:flex;flex-direction:column;gap:14px}
+  .tag{font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-3);align-self:flex-start;padding:5px 10px;border:1px solid var(--line)}
+  .tag.accent-tag{color:var(--accent);border-color:var(--accent)}
+  .diff-side h3{margin:0;font-size:clamp(28px,3.4vw,44px);font-weight:700;letter-spacing:-.02em;line-height:1.02}
+  .diff-side.us h3{color:var(--accent)}
+  .diff-side p{margin:0;font-size:15px;line-height:1.6;color:var(--fg-2);max-width:42ch}
+  .diff-side p em{font-style:italic;color:var(--fg)}
+  .figure{margin-top:auto;border:1px solid var(--line);background:#050507;padding:14px}
+  .figure svg{width:100%;height:auto;display:block}
+
+  .diff-bottom{margin-top:32px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px;padding:32px;border:1px solid var(--line);background:var(--bg-2)}
+  @media(max-width:720px){.diff-bottom{grid-template-columns:1fr;gap:16px;text-align:center}}
+  .bk{display:flex;flex-direction:column;gap:8px}
+  .bk-num{font-size:clamp(28px,3vw,40px);font-weight:700;letter-spacing:-.02em;line-height:1}
+  .bk-num.accent{color:var(--accent)}
+  .bk-lbl{font-size:14px;color:var(--fg-2);line-height:1.5}
+  .bk-lbl em{font-style:italic;color:var(--fg)}
+  .bk.arrow{align-items:center;justify-content:center}
+  .bk.arrow span{font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-3);padding:8px 14px;border:1px solid var(--line)}
+
+  .verdict{padding:120px 0 0}
+  .verdict h2{margin:0;font-size:clamp(36px,5.5vw,80px);font-weight:700;letter-spacing:-.025em;line-height:1;text-wrap:balance}
+  .verdict h2 em{font-style:italic;color:var(--fg-2);font-weight:400}
+  .verdict h2 .accent{color:var(--accent)}
+  .verdict .by{margin-top:40px;font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-3);display:flex;gap:10px;align-items:center}
+  .verdict .by i{width:32px;height:1px;background:var(--fg-3);display:inline-block}
+
+  .cta-strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:80px 40px;text-align:center;margin-top:120px}
+  .cta-strip h3{margin:0 0 28px;font-size:clamp(24px,3.4vw,44px);font-weight:600;letter-spacing:-.02em}
+  .cta-strip h3 .accent{color:var(--accent)}
+  .cta-strip a{display:inline-block;padding:14px 32px;border:1px solid var(--fg);font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;transition:all .2s}
+  .cta-strip a:hover{background:var(--fg);color:var(--bg)}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<nav class="cl-nav">
+  <a href="/" class="brand">CAESTUS</a>
+  <nav>
+    <a href="/problem/" class="active">Problem</a>
+    <a href="/product/">Product</a>
+    <a href="/team/">Team</a>
+    <a href="/vision/">Vision</a>
+    <a href="/contact/">Contact</a>
+  </nav>
+  <a href="/contact/" class="access">Request Access →</a>
+</nav>
+
+<main>
+  <section class="hero">
+    <div class="eyebrow">002 / The Problem</div>
+    <h1>Touch is<br><em>completely</em> <span class="accent">missing.</span></h1>
+    <p class="lede">VR got sharp. Tracking got faster. Headsets got lighter. The hand reaches in — nothing reaches back.</p>
+  </section>
+
+  <section class="statement">
+    <div class="label"><i></i>Problem Statement</div>
+    <p>Modern XR hardware has solved sight and sound at near-photoreal fidelity.</p>
+    <p>But the body's largest sensory system — <span class="accent">touch</span> — is still entirely absent.</p>
+    <p>Users reach into virtual worlds and feel <em>nothing</em>. No weight, no resistance, no texture, no contact.</p>
+  </section>
+
+  <section class="points">
+    <div class="point">
+      <span class="num">01 / Sight + Sound</span>
+      <h3>Solved.</h3>
+      <p>4K per eye, spatial audio, sub-20ms latency. The visual and auditory channels are effectively complete.</p>
+    </div>
+    <div class="point">
+      <span class="num">02 / Hands</span>
+      <h3>Tracked, not felt.</h3>
+      <p>Inside-out tracking renders the hand in-world, but every reach passes through solid objects. No force ever fires back.</p>
+    </div>
+    <div class="point">
+      <span class="num">03 / The Body</span>
+      <h3>Left behind.</h3>
+      <p>Skin, muscle, and proprioception receive zero input. Immersion ends at the wrist.</p>
+    </div>
+  </section>
+
+  <section class="landscape">
+    <div class="label"><i></i>Competitive Landscape</div>
+    <h2 class="lh">Others are <em>chasing</em> the problem.<br>Most stop at the <span class="accent">fingertips.</span></h2>
+
+    <div class="chart">
+      <div class="axis-y"><span class="ttl">Force Fidelity →</span></div>
+      <div class="axis-x">
+        <span>Hands only</span>
+        <span class="ttl">Body Coverage →</span>
+        <span>Full body</span>
+      </div>
+      <div class="plot">
+        <div class="quad tl"><b>Niche</b>Realistic, narrow scope</div>
+        <div class="quad tr"><b>Caestus</b>Real force · full body</div>
+        <div class="quad bl"><b>Toy</b>Buzz, hands only</div>
+        <div class="quad br"><b>Notification</b>Wide buzz, no force</div>
+
+        <div class="pt" style="left:14%;top:78%"><span class="node"></span><span class="lbl">Meta Touch Pro<small>Controller · vibration</small></span></div>
+        <div class="pt left" style="left:22%;top:42%"><span class="node"></span><span class="lbl">HaptX G1<small>Glove · microfluidic</small></span></div>
+        <div class="pt" style="left:24%;top:55%"><span class="node"></span><span class="lbl">SenseGlove Nova 2<small>Glove · cable brake</small></span></div>
+        <div class="pt left" style="left:62%;top:80%"><span class="node"></span><span class="lbl">bHaptics X40<small>Vest · vibration</small></span></div>
+        <div class="pt" style="left:74%;top:62%"><span class="node"></span><span class="lbl">Teslasuit Pro<small>Suit · EMS impulse</small></span></div>
+
+        <div class="pt us" style="left:84%;top:14%"><span class="node"></span><span class="lbl">Caestus<small>Suit · 48 clutch nodes</small></span></div>
+      </div>
+    </div>
+
+    <p class="grid-note">The market sits in the bottom half — wide <em>buzz</em> or narrow <em>force</em>. The top-right corner — full-body, real force — is empty.</p>
+  </section>
+
+  <section class="diff">
+    <div class="label"><i></i>What we do most differently</div>
+
+    <div class="diff-row">
+      <div class="diff-side them">
+        <div class="side-head">
+          <span class="tag">Everyone else</span>
+          <h3>Buzz the skin.</h3>
+        </div>
+        <p>Vibration motors, voice-coils, EMS pulses. The body feels <em>something happened</em> — but not <em>what</em>. Your brain knows it's a notification, not a wall.</p>
+        <div class="figure">
+          <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid meet">
+            <line x1="20" y1="150" x2="300" y2="150" stroke="#2a2a30" stroke-width="1" stroke-dasharray="2 5"/>
+            <text x="20" y="166" fill="#5a5a55" font-family="JetBrains Mono,monospace" font-size="8" letter-spacing="2">SHOULDER</text>
+            <text x="158" y="166" fill="#5a5a55" font-family="JetBrains Mono,monospace" font-size="8" letter-spacing="2">FOREARM</text>
+            <text x="252" y="166" fill="#5a5a55" font-family="JetBrains Mono,monospace" font-size="8" letter-spacing="2">WRIST</text>
+            <line x1="40" y1="150" x2="120" y2="120" stroke="#5a5a55" stroke-width="3" stroke-linecap="round" stroke-dasharray="3 3"/>
+            <line x1="120" y1="120" x2="280" y2="90" stroke="#5a5a55" stroke-width="3" stroke-linecap="round" stroke-dasharray="3 3"/>
+            <circle cx="40" cy="150" r="3" fill="#5a5a55"/>
+            <circle cx="120" cy="120" r="5" fill="#0a0a0c" stroke="#5a5a55" stroke-width="1.5"/>
+            <circle cx="280" cy="90" r="4" fill="#0a0a0c" stroke="#5a5a55" stroke-width="1.5"/>
+            <g transform="translate(170 110)">
+              <circle r="9" fill="#0a0a0c" stroke="#9b9b95" stroke-width="1.5"/>
+              <circle r="3" fill="#9b9b95"/>
+              <line x1="0" y1="-9" x2="0" y2="-22" stroke="#9b9b95" stroke-width="1"/>
+              <text x="0" y="-26" text-anchor="middle" fill="#9b9b95" font-family="JetBrains Mono,monospace" font-size="8" letter-spacing="2">BUZZ</text>
+            </g>
+            <g fill="none" stroke="#9b9b95" stroke-width="1">
+              <circle cx="170" cy="110" r="22" opacity=".4"/>
+              <circle cx="170" cy="110" r="32" opacity=".22"/>
+              <circle cx="170" cy="110" r="42" opacity=".1"/>
+            </g>
+            <line x1="234" y1="40" x2="234" y2="140" stroke="#3a3a40" stroke-width="1" stroke-dasharray="2 4"/>
+            <text x="241" y="34" fill="#5a5a55" font-family="JetBrains Mono,monospace" font-size="9" letter-spacing="2">WALL</text>
+            <text x="280" y="74" text-anchor="end" fill="#5a5a55" font-family="JetBrains Mono,monospace" font-size="9" letter-spacing="2">F = 0 N</text>
+            <text x="20" y="22" fill="#9b9b95" font-family="JetBrains Mono,monospace" font-size="8" letter-spacing="2">VIBRATION</text>
+            <text x="300" y="22" text-anchor="end" fill="#5a5a55" font-family="JetBrains Mono,monospace" font-size="8" letter-spacing="2">PASSES THROUGH</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="diff-side us">
+        <div class="side-head">
+          <span class="tag accent-tag">Caestus</span>
+          <h3>Push the body back.</h3>
+        </div>
+        <p>Mechanical clutch nodes lock joint motion at the moment of contact. The arm <em>actually stops</em>. The body's own proprioception fills in the rest — weight, hardness, resistance.</p>
+        <div class="figure">
+          <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <marker id="dArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#ff4827"/></marker>
+              <pattern id="dHatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#ff4827" stroke-width="1.2" stroke-opacity=".5"/></pattern>
+            </defs>
+            <line x1="20" y1="150" x2="300" y2="150" stroke="#2a2a30" stroke-width="1" stroke-dasharray="2 5"/>
+            <text x="20" y="166" fill="#5a5a55" font-family="JetBrains Mono,monospace" font-size="8" letter-spacing="2">SHOULDER</text>
+            <text x="158" y="166" fill="#5a5a55" font-family="JetBrains Mono,monospace" font-size="8" letter-spacing="2">FOREARM</text>
+            <text x="252" y="166" fill="#5a5a55" font-family="JetBrains Mono,monospace" font-size="8" letter-spacing="2">WRIST</text>
+            <line x1="40" y1="150" x2="120" y2="120" stroke="#9b9b95" stroke-width="3" stroke-linecap="round"/>
+            <line x1="120" y1="120" x2="220" y2="100" stroke="#9b9b95" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="120" cy="120" r="5" fill="#0a0a0c" stroke="#9b9b95" stroke-width="1.5"/>
+            <circle cx="220" cy="100" r="4" fill="#0a0a0c" stroke="#9b9b95" stroke-width="1.5"/>
+            <circle cx="40" cy="150" r="3" fill="#9b9b95"/>
+            <g transform="translate(150 113)">
+              <circle r="9" fill="#0a0a0c" stroke="#ff4827" stroke-width="1.5"/>
+              <circle r="3" fill="#ff4827"/>
+              <line x1="0" y1="-9" x2="0" y2="-22" stroke="#ff4827" stroke-width="1"/>
+              <text x="0" y="-26" text-anchor="middle" fill="#ff4827" font-family="JetBrains Mono,monospace" font-size="8" letter-spacing="2">CLUTCH</text>
+            </g>
+            <rect x="234" y="40" width="14" height="100" fill="url(#dHatch)" stroke="#ff4827" stroke-width="1.5"/>
+            <text x="241" y="34" text-anchor="middle" fill="#ff4827" font-family="JetBrains Mono,monospace" font-size="9" letter-spacing="2">WALL</text>
+            <circle cx="234" cy="100" r="3" fill="#ff4827"/>
+            <circle cx="234" cy="100" r="8" fill="none" stroke="#ff4827" stroke-width="1" opacity=".5"/>
+            <line x1="232" y1="100" x2="212" y2="100" stroke="#ff4827" stroke-width="1.6" marker-end="url(#dArr)"/>
+            <text x="230" y="82" text-anchor="end" fill="#ff4827" font-family="JetBrains Mono,monospace" font-size="9" letter-spacing="2">F = 18 N</text>
+            <g transform="translate(120 120)">
+              <line x1="-12" y1="-22" x2="12" y2="-22" stroke="#ff4827" stroke-width="1"/>
+              <line x1="-12" y1="-22" x2="-12" y2="-15" stroke="#ff4827" stroke-width="1"/>
+              <line x1="12" y1="-22" x2="12" y2="-15" stroke="#ff4827" stroke-width="1"/>
+              <text x="0" y="-28" text-anchor="middle" fill="#ff4827" font-family="JetBrains Mono,monospace" font-size="8" letter-spacing="2">LOCK</text>
+            </g>
+            <text x="20" y="22" fill="#9b9b95" font-family="JetBrains Mono,monospace" font-size="8" letter-spacing="2">CAESTUS</text>
+            <text x="300" y="22" text-anchor="end" fill="#5a5a55" font-family="JetBrains Mono,monospace" font-size="8" letter-spacing="2">HALTS · 2.8 ms</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="diff-bottom">
+      <div class="bk">
+        <span class="bk-num">Buzz</span>
+        <span class="bk-lbl">is a <em>signal</em> the brain has to interpret.</span>
+      </div>
+      <div class="bk arrow"><span>vs.</span></div>
+      <div class="bk">
+        <span class="bk-num accent">Force</span>
+        <span class="bk-lbl">is a <em>fact</em> the body already knows.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="verdict">
+    <h2>Screens got better.<br>Tracking got faster.<br>Touch <em>flatlined</em> at <span class="accent">zero.</span></h2>
+    <div class="by"><i></i>002 / The Problem · END</div>
+  </section>
+</main>
+
+<section class="cta-strip">
+  <h3>We're building the part that <span class="accent">pushes back.</span></h3>
+  <a href="/product/">See the System →</a>
+</section>
+
+<footer class="cl-foot">
+  <div class="row">
+    <div style="font-family:var(--font-display);font-weight:700;font-size:14px;letter-spacing:.04em;color:var(--fg)">CAESTUS</div>
+    <div style="display:flex;gap:28px;flex-wrap:wrap">
+      <a href="/vision/">Vision</a><a href="/product/">Product</a><a href="/problem/">Problem</a><a href="/team/">Team</a><a href="/contact/">Contact</a>
+    </div>
+    <div style="display:flex;gap:24px"><a>X</a><a>Instagram</a><a>LinkedIn</a></div>
+  </div>
+  <div class="credit">Caestus Labs / 2026 / Built in Ontario</div>
+</footer>
+</body>
+</html>

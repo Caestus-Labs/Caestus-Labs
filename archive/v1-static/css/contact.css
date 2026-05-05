@@ -1,0 +1,319 @@
+/* =====================================================================
+   Contact page styles: form layout, inputs, side panel, animations
+   ===================================================================== */
+
+/* 2-column grid: form (60%) + side panel (40%) */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 80px;
+  align-items: flex-start;
+}
+
+.form-column {
+  width: 100%;
+}
+
+.side-panel {
+  width: 100%;
+}
+
+/* ========== Form styling ========== */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-group label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  font-weight: 500;
+}
+
+.form-group .optional {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: var(--ink-2);
+  font-weight: 400;
+  letter-spacing: .12em;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  border: 1px solid var(--line);
+  background: transparent;
+  padding: 14px 18px;
+  font-size: 15px;
+  color: var(--ink);
+  font-family: "Inter Tight", system-ui, sans-serif;
+  border-radius: 4px;
+  transition: border-color 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+}
+
+.form-group input::placeholder,
+.form-group select::placeholder,
+.form-group textarea::placeholder {
+  color: var(--ink-2);
+  opacity: .6;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.18);
+}
+
+.form-group select {
+  cursor: pointer;
+  appearance: none;
+  padding-right: 36px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'><path d='M1 1L6 6L11 1' stroke='%231C1C1E' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.form-group select:focus {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'><path d='M1 1L6 6L11 1' stroke='%23FF6B4A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+  font-size: 14px;
+}
+
+/* ========== Submit button ========== */
+.submit-btn {
+  position: relative;
+  width: 100%;
+  padding: 14px 22px;
+  background: var(--ink);
+  color: var(--bg);
+  border: 1px solid var(--ink);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 200ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.submit-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--coral);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 350ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  z-index: -1;
+}
+
+.submit-btn:hover::before {
+  transform: scaleX(1);
+}
+
+.submit-btn:hover {
+  color: var(--bg);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit-btn.loading .btn-text {
+  visibility: hidden;
+}
+
+.submit-btn .btn-loader {
+  display: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(245, 245, 242, 0.3);
+  border-top-color: var(--bg);
+  border-radius: 50%;
+  animation: spin 600ms linear infinite;
+}
+
+.submit-btn.loading .btn-loader {
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ========== Form status messages ========== */
+.form-status {
+  min-height: 24px;
+  font-size: 14px;
+  font-family: "Inter Tight", system-ui, sans-serif;
+  padding: 8px 0;
+  text-align: center;
+  transition: color 300ms ease;
+}
+
+.form-status.success {
+  color: #4a9a6c;
+}
+
+.form-status.error {
+  color: #cc3a3a;
+}
+
+.form-status.warning {
+  color: #cc7a1a;
+}
+
+/* ========== Side panel ========== */
+.side-panel {
+  padding: 0;
+}
+
+.panel-statement {
+  font-size: 16px;
+  color: var(--ink);
+  margin-bottom: 48px;
+  line-height: 1.5;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin-bottom: 48px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 16px;
+  color: var(--ink);
+  transition: color 200ms ease;
+}
+
+.info-value[href] {
+  color: var(--coral);
+}
+
+.info-value[href]:hover {
+  color: var(--ink);
+}
+
+.social-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.social-links a {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  transition: color 200ms ease;
+}
+
+.social-links a:hover {
+  color: var(--ink);
+}
+
+/* ========== Closing section ========== */
+.closing-section {
+  text-align: center;
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+.closing-text {
+  font-size: 16px;
+  color: var(--ink);
+  margin-top: 36px;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .submit-btn {
+    width: 100%;
+  }
+
+  .side-panel {
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+
+  .social-links {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 24px;
+  }
+}
+
+/* ========== Reduced motion ========== */
+@media (prefers-reduced-motion: reduce) {
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus,
+  .submit-btn::before {
+    transition: none;
+  }
+
+  .submit-btn::before {
+    transform: scaleX(1);
+  }
+
+  .submit-btn .btn-loader {
+    animation: none;
+  }
+}

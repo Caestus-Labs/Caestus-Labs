@@ -1,0 +1,200 @@
+/* Founder grid — 2-col desktop, 1-col mobile */
+.founder-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 48px;
+}
+
+/* Individual founder card */
+.founder-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Portrait placeholder — 1:1 square, initials centered */
+.founder-portrait {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 280px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  display: grid;
+  place-items: center;
+  font-family: "Inter Tight";
+  font-weight: 600;
+  font-size: 64px;
+  color: var(--ink-2);
+  transition:
+    background-color 350ms cubic-bezier(.2,.7,.2,1),
+    color 350ms cubic-bezier(.2,.7,.2,1);
+}
+
+.founder-portrait::before {
+  content: attr(data-initials);
+}
+
+.founder-card:hover .founder-portrait {
+  background: var(--ink);
+  color: var(--coral);
+}
+
+/* Founder name */
+.founder-name {
+  font-family: "Inter Tight";
+  font-weight: 500;
+  font-size: 22px;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Founder role — mono, uppercase, secondary color */
+.founder-role {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Founder bio */
+.founder-bio {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+/* Founder social links */
+.founder-links {
+  display: flex;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.founder-link {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: lowercase;
+  color: var(--ink-2);
+  transition: color 250ms cubic-bezier(.2,.7,.2,1);
+  text-decoration: none;
+  display: inline-flex;
+  gap: 4px;
+}
+
+.founder-link:hover {
+  color: var(--ink);
+}
+
+/* Advisor row — horizontal pill chips */
+.advisor-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.advisor-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 14px 20px;
+  font-family: "Inter Tight";
+  font-size: 13px;
+  background: transparent;
+  transition: all 250ms cubic-bezier(.2,.7,.2,1);
+}
+
+.advisor-chip:hover {
+  border-color: var(--ink);
+  background: var(--bg-2);
+}
+
+.advisor-name {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.advisor-sep {
+  color: var(--line);
+}
+
+.advisor-role {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  font-weight: 400;
+}
+
+/* Hiring CTA — centered section */
+.hiring-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 28px;
+}
+
+.hiring-subhead {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin: 0;
+  margin-top: -12px;
+}
+
+/* Mobile responsive — ≤768px */
+@media (max-width: 768px) {
+  .founder-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .founder-portrait {
+    max-width: 100%;
+  }
+
+  .advisor-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .advisor-chip {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .hiring-cta {
+    align-items: center;
+    text-align: center;
+  }
+
+  .section-title {
+    max-width: 100%;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .founder-portrait {
+    transition: none;
+  }
+
+  .founder-link {
+    transition: none;
+  }
+
+  .advisor-chip {
+    transition: none;
+  }
+}

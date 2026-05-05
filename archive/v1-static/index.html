@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Caestus Labs — VR you can feel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/main.css">
+<style>
+  /* Align landing accent with the new design system used on inner pages */
+  :root{--coral:#ff4827}
+
+  /* Footer styled to match the new design system (shared.css .cl-foot) */
+  .cl-foot{
+    border-top:1px solid #1f1f23;
+    padding:48px 40px 32px;
+    font-family:"JetBrains Mono",ui-monospace,monospace;
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9b9b95;
+    background:#0a0a0c;
+    display:flex;flex-direction:column;gap:24px;
+  }
+  .cl-foot a{color:#9b9b95;text-decoration:none;transition:color .2s}
+  .cl-foot a:hover{color:#f5f5f0}
+  .cl-foot .row{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+  .cl-foot .brandmark{font-family:"Inter Tight",sans-serif;font-weight:700;font-size:14px;letter-spacing:.04em;color:#f5f5f0}
+  .cl-foot .credit{text-align:center;color:#5a5a55}
+</style>
+</head>
+<body>
+
+<section class="hero" id="hero">
+  <div class="stage" id="stage">
+    <canvas id="scene"></canvas>
+    <div class="flash" id="flash"></div>
+    <div class="grain"></div>
+
+    <div class="chrome" id="chrome">
+      <header class="topbar">
+        <div class="brand">
+          <div class="mk"></div>
+          <span>Caestus Labs</span>
+        </div>
+        <nav>
+          <a href="/product/">Product</a><a href="/problem/">Problem</a><a href="/team/">Team</a><a href="/vision/">Vision</a><a href="/contact/">Contact</a>
+        </nav>
+        <div style="opacity:.7">EST. 2024 · SF</div>
+      </header>
+
+      <!-- Landing page title -->
+      <div class="landing-title" id="landing-title">
+        <h1 class="main-title">CAESTUS LABS</h1>
+        <p class="subtitle">The Future of Haptic Reality</p>
+      </div>
+
+      <div class="mid" id="mid">
+        <div class="copy-stack">
+          <div class="copy" data-copy="1">
+            <div class="eyebrow">Welcome to Caestus Labs</div>
+            <h1>
+              We're building<br>
+              <em>reality</em> you can <span class="accent">feel.</span>
+            </h1>
+            <p class="sub">The first haptic system that lets you physically experience virtual worlds. Touch, resist, and interact with digital objects as if they were real.</p>
+          </div>
+          <div class="copy" data-copy="2">
+            <div class="eyebrow">02 — The Problem</div>
+            <h1>
+              Touch is<br>
+              <em>completely</em> <span class="accent">missing.</span>
+            </h1>
+            <p class="sub">Current VR lacks tactile feedback. Existing haptic devices are bulky and imprecise. Developers struggle with complex integration. We're solving all three.</p>
+          </div>
+          <div class="copy" data-copy="3">
+            <div class="eyebrow">03 — Inside the hardware</div>
+            <h1>
+              Twelve servos.<br>
+              <em>One</em> <span class="accent">system.</span>
+            </h1>
+            <p class="sub">A carbon exoskeleton routes force across shoulder, elbow, and wrist. 184g per arm, &lt;4ms latency, cable-driven so the actuators never touch your skin.</p>
+          </div>
+          <div class="copy" data-copy="4">
+            <div class="eyebrow">04 — Presence</div>
+            <h1>
+              The world<br>
+              <em>pushes</em> <span class="accent">back.</span>
+            </h1>
+            <p class="sub">Move your cursor — the environment responds. Every object has weight, every surface resists. This is what training, surgical sim, and remote work feel like when space becomes physical.</p>
+          </div>
+        </div>
+        <div class="side" id="side">
+          <div class="specchip" id="spec-latency">
+            <span>LATENCY <strong>&lt;4ms</strong></span>
+            <span class="dot"></span>
+          </div>
+          <div class="specchip" id="spec-servos">
+            <span>SERVOS <strong>12</strong></span>
+          </div>
+          <div class="specchip" id="spec-mass">
+            <span>MASS · ARM <strong>184g</strong></span>
+          </div>
+          <div class="specchip" id="spec-range">
+            <span>RANGE <strong>±90°</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <footer class="bot">
+        <div class="progress">
+          <div class="labels">
+            <span id="l1" class="active">01 · Device</span>
+            <span id="l2">02 · Problem</span>
+            <span id="l3">03 · Craft</span>
+            <span id="l4">04 · Presence</span>
+          </div>
+          <div class="bar" id="bar"><div class="ticks"><i></i><i></i><i></i><i></i><i></i></div></div>
+        </div>
+        <div class="scrollhint">
+          Scroll
+          <div class="line"></div>
+        </div>
+      </footer>
+    </div>
+
+    <div class="stageind" id="stageind">
+      <div class="item active" data-s="1"><span>Front</span><span class="num">01</span></div>
+      <div class="item" data-s="2"><span>Problem</span><span class="num">02</span></div>
+      <div class="item" data-s="3"><span>Back</span><span class="num">03</span></div>
+      <div class="item" data-s="4"><span>Inside</span><span class="num">04</span></div>
+    </div>
+
+    <!-- Problem cards shown during stage 2 -->
+    <div class="problem-cards" id="problem-cards">
+      <div class="problem-card" id="pc1">
+        <h3>No Touch Sensation</h3>
+        <p>Users can't feel virtual objects</p>
+        <span class="stat">87% cite as #1 limitation</span>
+        <div class="expand-details">
+          <ul>
+            <li>No physical resistance feedback</li>
+            <li>Breaks immersion completely</li>
+            <li>Limits training applications</li>
+          </ul>
+        </div>
+      </div>
+      <div class="problem-card" id="pc2">
+        <h3>Limited Precision</h3>
+        <p>Vibration motors lack directionality</p>
+        <span class="stat">12ms latency average</span>
+        <div class="expand-details">
+          <ul>
+            <li>Single-point vibration only</li>
+            <li>No force direction sensing</li>
+            <li>Poor texture simulation</li>
+          </ul>
+        </div>
+      </div>
+      <div class="problem-card" id="pc3">
+        <h3>High Complexity</h3>
+        <p>Fragmented APIs, difficult integration</p>
+        <span class="stat">3 weeks to integrate</span>
+        <div class="expand-details">
+          <ul>
+            <li>Multiple SDKs required</li>
+            <li>Platform-specific code</li>
+            <li>No unified standards</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="next">
+  <h2>Built for training, industrial sim, and remote physical presence. <em>Shipping Q4.</em></h2>
+</section>
+
+<section class="contact-section">
+  <div class="contact-container">
+    <div class="contact-header">
+      <div class="eyebrow-dark">Get Early Access</div>
+      <h2 class="contact-title">
+        Be the first to <em>feel</em> the future
+      </h2>
+      <p class="contact-sub">
+        Limited developer kits available. Join our early access program and shape the future of haptic VR.
+      </p>
+    </div>
+
+    <form class="contact-form" id="contactForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required placeholder="John Doe">
+        </div>
+        <div class="form-group">
+          <label for="company">Company</label>
+          <input type="text" id="company" name="company" placeholder="Acme Inc.">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required placeholder="john@company.com">
+      </div>
+
+      <div class="form-group">
+        <label for="use_case">Use Case</label>
+        <select id="use_case" name="use_case" required>
+          <option value="">Select your primary use case</option>
+          <option value="training">Training & Simulation</option>
+          <option value="medical">Medical & Surgical</option>
+          <option value="industrial">Industrial Design</option>
+          <option value="gaming">Gaming & Entertainment</option>
+          <option value="research">Research & Development</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="message">Message <span class="optional">(optional)</span></label>
+        <textarea id="message" name="message" rows="4" placeholder="Tell us about your project..."></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn">
+        <span class="btn-text">Request Access</span>
+        <span class="btn-loader"></span>
+      </button>
+
+      <div class="form-status" id="formStatus"></div>
+    </form>
+  </div>
+</section>
+
+<footer class="cl-foot">
+  <div class="row">
+    <div class="brandmark">CAESTUS</div>
+    <div style="display:flex;gap:28px;flex-wrap:wrap">
+      <a href="/vision/">Vision</a><a href="/product/">Product</a><a href="/problem/">Problem</a><a href="/team/">Team</a><a href="/contact/">Contact</a>
+    </div>
+    <div style="display:flex;gap:24px"><a>X</a><a>Instagram</a><a>LinkedIn</a></div>
+  </div>
+  <div class="credit">Caestus Labs / 2026 / Built in Ontario</div>
+</footer>
+
+<script type="importmap">
+{
+  "imports":{
+    "three":"https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script src="js/config.js"></script>
+<script type="module" src="js/vr-experience.js"></script>
+<script type="module" src="js/contact-form.js"></script>
+</body>
+</html>

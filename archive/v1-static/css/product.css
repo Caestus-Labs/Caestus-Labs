@@ -1,0 +1,174 @@
+/* ------ Caestus Labs Product Page Styles ------ */
+
+/* Spec Grid */
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  margin-bottom: 20px;
+}
+
+.spec-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 28px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(245, 245, 242, 0.5);
+  transition: all .3s ease;
+}
+
+.spec-card:hover {
+  background: var(--bg-2);
+  border-color: rgba(28, 28, 30, .2);
+}
+
+.spec-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-bottom: 14px;
+  font-weight: 500;
+}
+
+.spec-number {
+  font-family: "Inter Tight", sans-serif;
+  font-size: clamp(56px, 6vw, 100px);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--ink);
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.spec-unit {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  font-weight: 400;
+}
+
+/* Anatomy SVG Container */
+.anatomy-svg {
+  width: 100%;
+  max-width: 900px;
+  height: auto;
+  margin: 48px 0 32px 0;
+  display: block;
+}
+
+/* Hotspot Labels */
+.hotspot-labels {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  height: 320px;
+}
+
+.hotspot {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.label-line {
+  width: 24px;
+  height: 1px;
+  background: var(--coral);
+}
+
+.label-text {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* CTA Section */
+.cta-section {
+  text-align: center;
+  padding: clamp(80px, 12vh, 140px) 40px;
+}
+
+.cta-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.cta-section .section-title {
+  margin-bottom: 32px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .spec-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .spec-card {
+    padding: 20px 12px;
+  }
+
+  .spec-number {
+    font-size: clamp(40px, 8vw, 72px);
+  }
+
+  .hotspot-labels {
+    height: 240px;
+  }
+
+  .hotspot {
+    font-size: 9px;
+  }
+
+  .label-line {
+    width: 16px;
+  }
+
+  .cta-section {
+    padding: 60px 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .spec-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .spec-card {
+    padding: 16px 10px;
+  }
+
+  .spec-number {
+    font-size: clamp(32px, 10vw, 56px);
+  }
+
+  .hotspot-labels {
+    height: 200px;
+  }
+
+  .hotspot {
+    font-size: 8px;
+  }
+
+  .label-line {
+    width: 12px;
+  }
+
+  .label-text {
+    font-size: 9px;
+  }
+}

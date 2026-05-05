@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Caestus Labs — The Team</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/shared.css">
+<style>
+  body{background:#0a0a0c}
+
+  .t-hero{padding:140px 40px 64px;max-width:1440px;margin:0 auto}
+  .t-hero h1{margin:24px 0 0;font-size:clamp(56px,9vw,144px);letter-spacing:-.03em;line-height:.92;font-weight:700}
+  .t-hero h1 em{font-style:italic;font-weight:400;color:var(--fg-2)}
+  .t-hero h1 .accent{color:var(--accent)}
+  .t-hero .sub{margin-top:32px;font-size:18px;line-height:1.55;color:var(--fg-2);max-width:54ch}
+  .t-hero .meta{display:flex;gap:32px;margin-top:48px;flex-wrap:wrap;font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-3);border-top:1px solid var(--line);padding-top:24px}
+  .t-hero .meta strong{color:var(--fg);font-weight:500}
+
+  .portraits{padding:48px 40px 120px;max-width:1440px;margin:0 auto}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+  @media(max-width:980px){.grid{grid-template-columns:1fr}}
+
+  .card{display:flex;flex-direction:column;gap:20px;cursor:default;position:relative}
+  .frame{
+    aspect-ratio:4/5;background:#101013;position:relative;overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .frame::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg, transparent 60%, rgba(0,0,0,.7));
+    pointer-events:none;
+  }
+  .frame .stripes{
+    position:absolute;inset:0;
+    background:repeating-linear-gradient(0deg, transparent 0 2px, rgba(255,255,255,.012) 2px 4px);
+    pointer-events:none;mix-blend-mode:overlay;
+  }
+  .frame svg{position:absolute;inset:0;width:100%;height:100%;filter:grayscale(1) contrast(1.05)}
+  .frame .corner{position:absolute;font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(245,245,240,.7);z-index:2}
+  .frame .corner.tl{top:12px;left:12px}
+  .frame .corner.br{bottom:12px;right:12px}
+  .frame .scan{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,72,39,.4),transparent);opacity:0;transition:opacity .4s;z-index:3}
+  .card:hover .scan{opacity:1;animation:scan 4s linear infinite}
+  @keyframes scan{0%{top:0}100%{top:100%}}
+
+  .meta-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-3)}
+  .meta-row .num{color:var(--accent)}
+  .name{font-family:var(--font-display);font-weight:700;font-size:32px;letter-spacing:-.02em;line-height:1.05;margin:0}
+  .role{font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-2);margin:0}
+  .bio{margin:0;color:var(--fg-2);font-size:14px;line-height:1.55;max-width:36ch}
+  .links{display:flex;gap:16px;font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-3);margin-top:auto}
+  .links a{color:var(--fg-3);transition:color .2s;border-bottom:1px solid transparent;padding-bottom:2px;cursor:pointer}
+  .links a:hover{color:var(--fg);border-color:var(--fg)}
+
+  .manifesto{padding:120px 40px;max-width:1100px;margin:0 auto;text-align:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .manifesto q{font-family:var(--font-display);font-size:clamp(28px,4vw,52px);font-weight:400;letter-spacing:-.01em;line-height:1.18;display:block;quotes:none}
+  .manifesto q em{font-style:italic;color:var(--fg-2)}
+  .manifesto .by{margin-top:32px;font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-3)}
+
+  .hiring{padding:120px 40px;max-width:1440px;margin:0 auto}
+  .hiring .head{display:flex;justify-content:space-between;align-items:flex-end;gap:48px;margin-bottom:48px;flex-wrap:wrap}
+  .hiring h2{margin:0;font-size:clamp(36px,5vw,72px);font-weight:700;letter-spacing:-.02em;line-height:1;max-width:14ch}
+  .hiring .sub{max-width:36ch;color:var(--fg-2);font-size:16px;line-height:1.55}
+  .roles{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+  @media(max-width:720px){.roles{grid-template-columns:1fr}}
+  .role-cell{background:var(--bg);padding:32px;display:flex;flex-direction:column;gap:14px;transition:background .2s;cursor:pointer}
+  .role-cell:hover{background:var(--bg-2)}
+  .role-cell .l{font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-3)}
+  .role-cell h3{margin:0;font-size:24px;font-weight:600;letter-spacing:-.01em}
+  .role-cell p{margin:0;color:var(--fg-2);font-size:14px;line-height:1.5}
+  .role-cell .arrow{margin-top:auto;font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-2)}
+
+  .variants{
+    position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:40;
+    display:flex;border:1px solid var(--line);background:rgba(15,15,18,.95);
+    backdrop-filter:blur(8px);border-radius:2px;padding:4px;
+    font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  }
+  .variants button{background:none;border:0;color:var(--fg-2);padding:8px 16px;cursor:pointer;font-family:inherit;font-size:inherit;letter-spacing:inherit;text-transform:inherit}
+  .variants button:hover{color:var(--fg)}
+  .variants button.active{background:var(--fg);color:var(--bg)}
+
+  body[data-v="b"] .grid{grid-template-columns:1fr;gap:0}
+  body[data-v="b"] .card{flex-direction:row;gap:32px;align-items:center;padding:40px 0;border-top:1px solid var(--line)}
+  body[data-v="b"] .card:last-child{border-bottom:1px solid var(--line)}
+  body[data-v="b"] .frame{flex:0 0 200px;aspect-ratio:4/5}
+  body[data-v="b"] .info{flex:1}
+  body[data-v="b"] .name{font-size:64px}
+  body[data-v="b"] .links{margin-top:16px}
+  @media(max-width:720px){body[data-v="b"] .card{flex-direction:column;align-items:stretch}body[data-v="b"] .frame{flex:auto}}
+
+  body[data-v="c"] .frame{aspect-ratio:1/1}
+  body[data-v="c"] .name{font-size:24px}
+  body[data-v="c"] .bio{font-family:var(--font-display);font-size:18px;line-height:1.4;font-style:italic;color:var(--fg);max-width:none}
+  body[data-v="c"] .bio::before{content:"\201C";font-size:24px;color:var(--accent);margin-right:4px}
+  body[data-v="c"] .bio::after{content:"\201D";font-size:24px;color:var(--accent);margin-left:4px}
+</style>
+</head>
+<body data-v="a">
+<div class="grain"></div>
+
+<nav class="cl-nav">
+  <a href="/" class="brand">CAESTUS</a>
+  <nav>
+    <a href="/problem/">Problem</a>
+    <a href="/product/">Product</a>
+    <a href="/team/" class="active">Team</a>
+    <a href="/vision/">Vision</a>
+    <a href="/contact/">Contact</a>
+  </nav>
+  <a href="/contact/" class="access">Request Access →</a>
+</nav>
+
+<div class="variants">
+  <button class="active" data-v="a">A · Editorial</button>
+  <button data-v="b">B · Roster</button>
+  <button data-v="c">C · Quote-led</button>
+</div>
+
+<section class="t-hero">
+  <div class="eyebrow">005 / The Team</div>
+  <h1>The people<br><em>who can't</em><br><span class="accent">stop building.</span></h1>
+  <p class="sub">Hardware, firmware, and the math that holds them together. We met in a basement lab in Toronto in 2024 and haven't stopped since. The suit you're seeing is the eleventh prototype.</p>
+  <div class="meta">
+    <span><strong>2</strong> · Founders</span>
+    <span><strong>11</strong> · Prototypes built</span>
+    <span><strong>2024</strong> · Founded</span>
+    <span><strong>Toronto / SF</strong> · Where</span>
+  </div>
+</section>
+
+<section class="portraits">
+  <div class="grid" id="grid">
+    <article class="card">
+      <div class="frame">
+        <span class="corner tl">001</span>
+        <span class="corner br">FOUNDER</span>
+        <div class="stripes"></div>
+        <div class="scan"></div>
+        <svg viewBox="0 0 200 250" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="g1" cx="50%" cy="35%" r="55%"><stop offset="0%" stop-color="#3a3a40"/><stop offset="100%" stop-color="#0e0e12"/></radialGradient>
+          </defs>
+          <rect width="200" height="250" fill="url(#g1)"/>
+          <ellipse cx="100" cy="92" rx="38" ry="46" fill="#1a1a1e"/>
+          <path d="M50 250 Q50 170 100 158 Q150 170 150 250 Z" fill="#1a1a1e"/>
+          <path d="M70 78 Q70 50 100 50 Q130 50 130 78 L130 96 Q120 88 100 88 Q80 88 70 96 Z" fill="#0e0e12"/>
+        </svg>
+      </div>
+      <div class="info">
+        <div class="meta-row"><span class="num">01 / FNDR</span><span>EST. 2024</span></div>
+        <h2 class="name">James Iang</h2>
+        <p class="role">Co-founder · CEO · Hardware</p>
+        <p class="bio">Builds the suit shell, harness, and clutch geometry. Previously led actuator integration on consumer wearables. Mechanical engineer focused on cable-driven systems and tendon kinematics.</p>
+        <div class="links"><a>LinkedIn ↗</a><a>GitHub ↗</a><a>X ↗</a></div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="frame">
+        <span class="corner tl">002</span>
+        <span class="corner br">FOUNDER</span>
+        <div class="stripes"></div>
+        <div class="scan"></div>
+        <svg viewBox="0 0 200 250" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="g2" cx="55%" cy="38%" r="55%"><stop offset="0%" stop-color="#3a3a40"/><stop offset="100%" stop-color="#0e0e12"/></radialGradient>
+          </defs>
+          <rect width="200" height="250" fill="url(#g2)"/>
+          <ellipse cx="100" cy="90" rx="36" ry="44" fill="#1a1a1e"/>
+          <path d="M48 250 Q48 175 100 162 Q152 175 152 250 Z" fill="#1a1a1e"/>
+          <path d="M64 96 Q66 56 100 50 Q138 60 138 96 L132 102 Q124 90 100 90 Q76 90 68 102 Z" fill="#0e0e12"/>
+        </svg>
+      </div>
+      <div class="info">
+        <div class="meta-row"><span class="num">02 / FNDR</span><span>EST. 2024</span></div>
+        <h2 class="name">Co-Founder</h2>
+        <p class="role">Co-founder · CTO · Firmware</p>
+        <p class="bio">Writes the realtime control loop that runs the clutch. Embedded systems engineer with prior work on real-time control for industrial robotics. Translates physical force into deterministic signal.</p>
+        <div class="links"><a>LinkedIn ↗</a><a>GitHub ↗</a><a>X ↗</a></div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="frame">
+        <span class="corner tl">003</span>
+        <span class="corner br">ADVISOR</span>
+        <div class="stripes"></div>
+        <div class="scan"></div>
+        <svg viewBox="0 0 200 250" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="g3" cx="48%" cy="36%" r="58%"><stop offset="0%" stop-color="#3a3a40"/><stop offset="100%" stop-color="#0e0e12"/></radialGradient>
+          </defs>
+          <rect width="200" height="250" fill="url(#g3)"/>
+          <ellipse cx="100" cy="88" rx="40" ry="46" fill="#1a1a1e"/>
+          <path d="M52 250 Q52 168 100 156 Q148 168 148 250 Z" fill="#1a1a1e"/>
+          <path d="M62 92 Q60 52 100 48 Q140 52 138 92 L130 98 Q124 86 100 86 Q76 86 70 98 Z" fill="#0e0e12"/>
+        </svg>
+      </div>
+      <div class="info">
+        <div class="meta-row"><span class="num">03 / ADV</span><span>EST. 2024</span></div>
+        <h2 class="name">Advisory Board</h2>
+        <p class="role">Robotics · Haptics · Hardware</p>
+        <p class="bio">Researchers and operators from Stanford robotics, MIT Media Lab haptics, and ex-Apple hardware teams. They keep the bench honest and the schedule realistic.</p>
+        <div class="links"><a>Read more ↗</a></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="manifesto">
+  <div class="eyebrow" style="margin-bottom:32px;color:var(--fg-3)">CODE OF WORK</div>
+  <q>Build the thing that doesn't exist. <em>Then build it again, smaller.</em> Then put it on someone and watch their face.</q>
+  <div class="by">— Caestus Labs · 2024</div>
+</section>
+
+<section class="hiring">
+  <div class="head">
+    <h2>We're hiring.</h2>
+    <p class="sub">Engineers, designers, and a haptics PhD. If you've ever shipped a control loop or a carbon part, talk to us.</p>
+  </div>
+  <div class="roles">
+    <div class="role-cell">
+      <span class="l">Open · Full-time · SF</span>
+      <h3>Senior Mechanical Engineer</h3>
+      <p>Own the suit shell, harness, and quick-release. Carbon, aluminum, soft goods. Ship MK2 by Q2.</p>
+      <span class="arrow">Apply →</span>
+    </div>
+    <div class="role-cell">
+      <span class="l">Open · Full-time · SF</span>
+      <h3>Embedded Firmware Engineer</h3>
+      <p>STM32, real-time control of 48 high-voltage channels at sub-4ms latency. Bring your scope.</p>
+      <span class="arrow">Apply →</span>
+    </div>
+    <div class="role-cell">
+      <span class="l">Open · Full-time · Toronto</span>
+      <h3>Haptics Researcher</h3>
+      <p>Work on perception models, force-rendering algorithms, and the psychophysics of presence.</p>
+      <span class="arrow">Apply →</span>
+    </div>
+    <div class="role-cell">
+      <span class="l">Open · Contract · Remote</span>
+      <h3>Industrial Designer</h3>
+      <p>Help us make the second suit feel inevitable. Soft-goods, color, finish, packaging.</p>
+      <span class="arrow">Apply →</span>
+    </div>
+  </div>
+</section>
+
+<footer class="cl-foot">
+  <div class="row">
+    <div style="font-family:var(--font-display);font-weight:700;font-size:14px;letter-spacing:.04em;color:var(--fg)">CAESTUS</div>
+    <div style="display:flex;gap:28px;flex-wrap:wrap">
+      <a href="/vision/">Vision</a><a href="/product/">Product</a><a href="/problem/">Problem</a><a href="/team/">Team</a><a href="/contact/">Contact</a>
+    </div>
+    <div style="display:flex;gap:24px"><a>X</a><a>Instagram</a><a>LinkedIn</a></div>
+  </div>
+  <div class="credit">Caestus Labs / 2026 / Built in Ontario</div>
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.variants button');
+  const quotes = [
+    "Force is information. We're building a way to write to the body.",
+    "The right latency is the latency you stop noticing.",
+    "Bench-honest. Schedule-realistic. Body-first."
+  ];
+  const cards = document.querySelectorAll('.card .bio');
+  const originals = Array.from(cards).map(b => b.textContent);
+  function syncQuotes(){
+    const v = document.body.dataset.v;
+    cards.forEach((b, i) => {
+      b.textContent = (v === 'c') ? quotes[i] : originals[i];
+    });
+  }
+  buttons.forEach(b => b.addEventListener('click', () => {
+    buttons.forEach(x => x.classList.toggle('active', x === b));
+    document.body.dataset.v = b.dataset.v;
+    syncQuotes();
+  }));
+</script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Caestus Labs — Contact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/shared.css">
+<style>
+  body{background:#0a0a0c}
+
+  main{max-width:1280px;margin:0 auto;padding:160px 40px 96px}
+
+  .c-hero{display:grid;grid-template-columns:1fr;gap:24px;padding-bottom:64px;border-bottom:1px solid var(--line)}
+  .c-hero h1{margin:24px 0 0;font-size:clamp(56px,9vw,128px);letter-spacing:-.03em;line-height:.92;font-weight:700;text-wrap:balance}
+  .c-hero h1 em{font-style:italic;font-weight:400;color:var(--fg-2)}
+  .c-hero h1 .accent{color:var(--accent)}
+  .c-hero .sub{margin-top:16px;font-size:18px;line-height:1.55;color:var(--fg-2);max-width:54ch}
+
+  .c-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px;padding:80px 0;border-bottom:1px solid var(--line)}
+  @media(max-width:880px){.c-grid{grid-template-columns:1fr;gap:48px}}
+
+  .contact-form{display:flex;flex-direction:column;gap:24px}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:560px){.form-row{grid-template-columns:1fr}}
+  .form-group{display:flex;flex-direction:column;gap:8px}
+  .form-group label{font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-3)}
+  .form-group .optional{color:var(--fg-3);text-transform:none;letter-spacing:0;font-size:11px}
+  .form-group input,
+  .form-group select,
+  .form-group textarea{
+    background:transparent;border:1px solid var(--line);border-radius:0;
+    color:var(--fg);font-family:var(--font-body);font-size:15px;
+    padding:14px 16px;outline:none;transition:border-color .2s,background .2s;
+    -webkit-appearance:none;appearance:none;
+  }
+  .form-group textarea{resize:vertical;min-height:120px;font-family:var(--font-body)}
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus{border-color:var(--accent);background:#0f0f12}
+  .form-group input::placeholder,
+  .form-group textarea::placeholder{color:var(--fg-3)}
+  .form-group select{
+    background-image:linear-gradient(45deg, transparent 50%, var(--fg-2) 50%), linear-gradient(135deg, var(--fg-2) 50%, transparent 50%);
+    background-position:calc(100% - 18px) 50%, calc(100% - 12px) 50%;
+    background-size:6px 6px,6px 6px;background-repeat:no-repeat;padding-right:36px;
+  }
+  .form-group select option{background:var(--bg-2);color:var(--fg)}
+
+  .submit-btn{
+    margin-top:8px;align-self:flex-start;cursor:pointer;
+    background:var(--accent);color:var(--bg);border:1px solid var(--accent);
+    font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    padding:16px 32px;transition:background .2s,color .2s;
+    display:inline-flex;align-items:center;gap:12px;
+  }
+  .submit-btn:hover{background:transparent;color:var(--accent)}
+  .submit-btn[disabled]{opacity:.6;cursor:wait}
+  .btn-loader{
+    width:12px;height:12px;border-radius:50%;
+    border:2px solid currentColor;border-top-color:transparent;
+    display:none;animation:spin .8s linear infinite;
+  }
+  .submit-btn.loading .btn-loader{display:inline-block}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .form-status{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-2);min-height:16px}
+  .form-status.success{color:var(--accent)}
+  .form-status.error{color:#ff6b6b}
+
+  .side-panel{display:flex;flex-direction:column;gap:32px}
+  .side-panel .panel-statement{
+    font-family:var(--font-display);font-weight:400;font-size:clamp(24px,2.4vw,32px);
+    line-height:1.2;letter-spacing:-.01em;color:var(--fg);margin:0;
+  }
+  .side-panel .panel-statement em{font-style:italic;color:var(--fg-2)}
+
+  .panel-eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);display:flex;gap:10px;align-items:center}
+  .panel-eyebrow i{display:inline-block;width:24px;height:1px;background:var(--accent)}
+
+  .info-block{display:flex;flex-direction:column;gap:20px;border-top:1px solid var(--line);padding-top:24px}
+  .info-item{display:flex;flex-direction:column;gap:4px}
+  .info-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-3)}
+  .info-value{color:var(--fg);font-size:15px}
+  a.info-value{color:var(--fg);transition:color .2s}
+  a.info-value:hover{color:var(--accent)}
+
+  .socials{display:flex;gap:24px;flex-wrap:wrap;font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-3);margin-top:auto;border-top:1px solid var(--line);padding-top:24px}
+  .socials a{color:var(--fg-3);transition:color .2s}
+  .socials a:hover{color:var(--fg)}
+
+  .closer{padding:96px 0 0;text-align:center}
+  .closer p{font-size:clamp(18px,2vw,24px);color:var(--fg-2);margin:0}
+  .closer a{color:var(--accent);transition:color .2s;border-bottom:1px solid var(--accent);padding-bottom:2px}
+  .closer a:hover{color:var(--fg);border-color:var(--fg)}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<nav class="cl-nav">
+  <a href="/" class="brand">CAESTUS</a>
+  <nav>
+    <a href="/problem/">Problem</a>
+    <a href="/product/">Product</a>
+    <a href="/team/">Team</a>
+    <a href="/vision/">Vision</a>
+    <a href="/contact/" class="active">Contact</a>
+  </nav>
+  <a href="/contact/" class="access">Request Access →</a>
+</nav>
+
+<main>
+  <section class="c-hero">
+    <div class="eyebrow">007 / Get In Touch</div>
+    <h1>Be the first to<br><em>feel</em> the <span class="accent">future.</span></h1>
+    <p class="sub">Limited developer kits available for Q4 2026. Tell us what you're building. We read every message.</p>
+  </section>
+
+  <section class="c-grid">
+    <form class="contact-form" id="contactForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label for="company">Company</label>
+          <input type="text" id="company" name="company" placeholder="Acme Inc.">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required placeholder="you@company.com">
+      </div>
+      <div class="form-group">
+        <label for="use_case">Use Case</label>
+        <select id="use_case" name="use_case" required>
+          <option value="">Select your primary use case</option>
+          <option value="training">Training &amp; Simulation</option>
+          <option value="medical">Medical &amp; Surgical</option>
+          <option value="industrial">Industrial Design</option>
+          <option value="gaming">Gaming &amp; Entertainment</option>
+          <option value="research">Research &amp; Development</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">Message <span class="optional">(optional)</span></label>
+        <textarea id="message" name="message" rows="4" placeholder="Tell us about your project..."></textarea>
+      </div>
+      <button type="submit" class="submit-btn">
+        <span class="btn-text">Request Access →</span>
+        <span class="btn-loader"></span>
+      </button>
+      <div class="form-status" id="formStatus"></div>
+    </form>
+
+    <aside class="side-panel">
+      <div class="panel-eyebrow"><i></i>Direct channels</div>
+      <p class="panel-statement">We respond within <em>48 hours.</em></p>
+
+      <div class="info-block">
+        <div class="info-item">
+          <div class="info-label">Email</div>
+          <a class="info-value" href="mailto:hello@caestuslabs.com">hello@caestuslabs.com</a>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Investors</div>
+          <a class="info-value" href="mailto:invest@caestuslabs.com">invest@caestuslabs.com</a>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Location</div>
+          <div class="info-value">Toronto / San Francisco</div>
+        </div>
+      </div>
+
+      <div class="socials">
+        <a>X →</a>
+        <a>LinkedIn →</a>
+        <a>GitHub →</a>
+      </div>
+    </aside>
+  </section>
+
+  <section class="closer">
+    <p>Or just email <a href="mailto:hello@caestuslabs.com">hello@caestuslabs.com</a></p>
+  </section>
+</main>
+
+<footer class="cl-foot">
+  <div class="row">
+    <div style="font-family:var(--font-display);font-weight:700;font-size:14px;letter-spacing:.04em;color:var(--fg)">CAESTUS</div>
+    <div style="display:flex;gap:28px;flex-wrap:wrap">
+      <a href="/vision/">Vision</a><a href="/product/">Product</a><a href="/problem/">Problem</a><a href="/team/">Team</a><a href="/contact/">Contact</a>
+    </div>
+    <div style="display:flex;gap:24px"><a>X</a><a>Instagram</a><a>LinkedIn</a></div>
+  </div>
+  <div class="credit">Caestus Labs / 2026 / Built in Ontario</div>
+</footer>
+
+<script src="/js/config.js"></script>
+<script type="module" src="/js/contact-form.js"></script>
+</body>
+</html>

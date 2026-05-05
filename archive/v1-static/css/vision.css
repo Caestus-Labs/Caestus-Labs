@@ -1,0 +1,212 @@
+/* ------------------------------------------------------------------
+   Vision page styles — manifesto, timeline, closing
+   ------------------------------------------------------------------ */
+
+/* Manifesto pillars layout */
+.manifesto-pillars {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 36px;
+  max-width: 900px;
+  margin-bottom: 0;
+}
+
+.pillar {
+  display: contents;
+}
+
+.pillar-number {
+  font-family: "Inter Tight", system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 80px;
+  line-height: .9;
+  color: var(--coral);
+  text-align: left;
+  min-width: 120px;
+  grid-column: 1;
+}
+
+.pillar p {
+  color: var(--ink);
+  font-size: 19px;
+  line-height: 1.4;
+  grid-column: 2;
+  margin: 0 0 40px 0;
+}
+
+.pillar:last-child p {
+  margin-bottom: 0;
+}
+
+/* Timeline wrapper and SVG */
+.timeline-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.timeline-svg {
+  width: 100%;
+  height: auto;
+  min-height: 240px;
+  display: block;
+}
+
+/* Timeline markers and labels */
+.timeline-markers g {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.timeline-markers.is-in g {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.8s cubic-bezier(.2,.7,.2,1);
+}
+
+.timeline-markers.is-in g:nth-child(1) {
+  transition-delay: 1.6s;
+}
+
+.timeline-markers.is-in g:nth-child(2) {
+  transition-delay: 1.68s;
+}
+
+.timeline-markers.is-in g:nth-child(3) {
+  transition-delay: 1.76s;
+}
+
+.timeline-markers.is-in g:nth-child(4) {
+  transition-delay: 1.84s;
+}
+
+.marker-date {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  text-anchor: middle;
+  font-weight: 400;
+}
+
+.marker-title {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-anchor: middle;
+  font-weight: 500;
+}
+
+.marker-caption {
+  font-family: "Inter Tight", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ink-2);
+  text-anchor: middle;
+  font-weight: 400;
+  max-width: 140px;
+}
+
+/* Closing section */
+.closing-section {
+  text-align: center;
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+.closing-content {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.closing-section .section-eyebrow {
+  justify-content: center;
+}
+
+.closing-section .section-title {
+  max-width: none;
+  margin: 0 auto 48px auto;
+}
+
+.closing-cta {
+  display: flex;
+  justify-content: center;
+}
+
+/* Mobile responsive — <= 768px */
+@media (max-width: 768px) {
+  /* Manifesto: stack number above paragraph */
+  .manifesto-pillars {
+    display: block;
+  }
+
+  .pillar-number {
+    font-size: 56px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .pillar p {
+    font-size: 17px;
+    line-height: 1.4;
+    margin-bottom: 32px;
+    display: block;
+  }
+
+  .pillar:last-child p {
+    margin-bottom: 0;
+  }
+
+  /* Timeline: rotate 90 degrees for vertical layout */
+  .timeline-wrapper {
+    padding: 40px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .timeline-svg {
+    width: 240px;
+    height: 1000px;
+    transform: rotate(-90deg) scaleX(-1);
+    transform-origin: center center;
+  }
+
+  /* Adjust marker text for mobile readability */
+  .marker-date {
+    font-size: 10px;
+  }
+
+  .marker-title {
+    font-size: 11px;
+  }
+
+  .marker-caption {
+    font-size: 12px;
+  }
+
+  .closing-section {
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+}
+
+/* Desktop/tablet: keep timeline horizontal (default) */
+@media (min-width: 769px) {
+  /* Explicit horizontal SVG sizing */
+  .timeline-wrapper {
+    width: 100%;
+    max-width: 1200px;
+  }
+
+  .timeline-svg {
+    width: 100%;
+    height: 240px;
+  }
+}

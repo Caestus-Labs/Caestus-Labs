@@ -1,0 +1,25 @@
+# Local Supabase config (real keys live here — never commit)
+js/config.js
+
+# OS
+.DS_Store
+**/.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Claude Code worktrees + cache
+.claude/
+**/.claude/
+**/.claude/worktrees/
+
+# Backups / scratch
+*.backup
+*.bak
+*.swp
+
+# Build output
+node_modules/
+dist/
+build/
