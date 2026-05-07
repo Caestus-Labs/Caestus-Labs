@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <defs>
+    
+  </defs>
+  <title>Caestus Labs — Stacked Lockup</title>
+  <rect width="800" height="800" fill="#15130f"></rect>
+  <g transform="translate(280 140) scale(10)">
+    
+  <rect x="5" y="5" width="14" height="2" fill="#f0ece4"></rect>
+  <rect x="5" y="5" width="2" height="5" fill="#f0ece4"></rect>
+  <rect x="5" y="11" width="7" height="2" fill="#f0ece4"></rect>
+  <rect x="5" y="17" width="14" height="2" fill="#f0ece4"></rect>
+  <rect x="5" y="14" width="2" height="5" fill="#f0ece4"></rect>
+
+  </g>
+  <text x="400" y="540" class="caestus" font-size="120" letter-spacing="28" fill="#f0ece4" text-anchor="middle">CAESTUS</text>
+  <text x="400" y="620" class="labs" font-size="56" fill="#f0ece4" opacity="0.6" text-anchor="middle">LABS</text>
+</svg>

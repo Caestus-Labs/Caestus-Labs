@@ -8,7 +8,7 @@
 <link rel="icon" href="/favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800&family=Inter:wght@300&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/coming-soon.css">
 </head>
 <body>
@@ -16,7 +16,17 @@
   <div class="vignette" aria-hidden="true"></div>
 
   <header class="topbar">
-    <div class="brand">CAESTUS</div>
+    <a class="brand" href="/" aria-label="Caestus Labs">
+      <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <rect x="5" y="5" width="14" height="2"/>
+        <rect x="5" y="5" width="2" height="5"/>
+        <rect x="5" y="11" width="7" height="2"/>
+        <rect x="5" y="17" width="14" height="2"/>
+        <rect x="5" y="14" width="2" height="5"/>
+      </svg>
+      <span class="brand-word">CAESTUS</span>
+      <span class="brand-sub">LABS</span>
+    </a>
     <div class="status"><span class="dot"></span>2026</div>
   </header>
 
@@ -29,6 +39,11 @@
         <span class="label">Sign Up</span>
         <span class="arrow" aria-hidden="true">→</span>
       </button>
+
+      <p class="click-hint" aria-hidden="true">
+        <span class="hint-mark">✦</span>
+        <span>click anywhere to disturb the field</span>
+      </p>
     </section>
   </main>
 

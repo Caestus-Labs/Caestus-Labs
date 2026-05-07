@@ -38,8 +38,32 @@ body.modal-open{overflow:hidden}
   letter-spacing:.22em;text-transform:uppercase;color:var(--fg-2);
 }
 .topbar .brand{
-  font-family:var(--font-display);font-weight:700;letter-spacing:.04em;
-  font-size:14px;color:var(--fg);
+  display:inline-flex;align-items:center;gap:12px;
+  color:var(--fg);text-decoration:none;
+  font-size:14px;line-height:1;
+  transition:opacity .2s ease;
+}
+.topbar .brand:hover{opacity:.82}
+.topbar .brand-mark{
+  width:22px;height:22px;display:block;
+  fill:currentColor;flex:none;
+}
+.topbar .brand-word{
+  font-family:"Archivo","Inter Tight",sans-serif;
+  font-weight:800;letter-spacing:.24em;
+  font-size:14px;text-transform:uppercase;
+}
+.topbar .brand-sub{
+  font-family:"Inter","Inter Tight",sans-serif;
+  font-weight:300;letter-spacing:.36em;
+  font-size:13px;text-transform:uppercase;
+  color:var(--fg);opacity:.6;
+  margin-left:2px;
+}
+@media (max-width:480px){
+  .topbar .brand-mark{width:18px;height:18px}
+  .topbar .brand-word{font-size:12px;letter-spacing:.22em}
+  .topbar .brand-sub{font-size:11px;letter-spacing:.32em}
 }
 .topbar .status{display:flex;align-items:center;gap:10px}
 .topbar .dot{
@@ -97,6 +121,36 @@ h1 .accent{color:var(--accent);font-style:italic;font-weight:400;text-shadow:0 0
 .cta:active{transform:translateY(1px)}
 .cta .arrow{transition:transform .2s}
 .cta:hover .arrow{transform:translateX(4px)}
+
+/* Click-anywhere hint */
+.click-hint{
+  margin:22px 0 0;
+  font-family:var(--font-mono);font-size:12px;
+  letter-spacing:.32em;text-transform:uppercase;color:var(--fg);
+  display:inline-flex;align-items:center;gap:12px;
+  padding:10px 18px;
+  border:1px solid var(--accent);
+  background:rgba(255,72,39,.08);
+  box-shadow:0 0 0 0 rgba(255,72,39,.35);
+  opacity:0;transform:translateY(6px);
+  animation:
+    hintIn 1.0s ease .9s forwards,
+    hintPulse 2.2s ease-in-out 2.0s infinite;
+}
+.click-hint .hint-mark{
+  color:var(--accent);font-size:14px;line-height:1;
+  text-shadow:0 0 12px rgba(255,72,39,.7);
+  animation:hintMark 1.6s ease-in-out infinite;
+}
+@keyframes hintIn{to{opacity:1;transform:none}}
+@keyframes hintPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,72,39,.35);background:rgba(255,72,39,.08)}
+  50%{box-shadow:0 0 0 10px rgba(255,72,39,0);background:rgba(255,72,39,.16)}
+}
+@keyframes hintMark{
+  0%,100%{transform:scale(1) rotate(0deg);opacity:.9}
+  50%{transform:scale(1.35) rotate(45deg);opacity:1}
+}
 
 .foot{
   position:relative;z-index:2;

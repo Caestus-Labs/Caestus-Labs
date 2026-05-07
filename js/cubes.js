@@ -67,82 +67,174 @@ const cubeMat = new THREE.MeshStandardMaterial({
   emissiveIntensity: 0.08
 })
 
+const CLICK_SLOTS = 4
+
 const uniforms = {
   uTime: { value: 0 },
-  uCursor: { value: new THREE.Vector3(0, 0, 0) },
-  uSigma: { value: 4.0 },
-  uRippleSpeed: { value: 1.4 },
-  uRippleFreq: { value: 3.2 }
+  uMouseNdc: { value: new THREE.Vector2(0, 0) },
+  uAspect: { value: window.innerWidth / window.innerHeight },
+  uSigma: { value: 0.32 },                    // glow radius in screen-space NDC
+  uCursorWorld: { value: new THREE.Vector3(0, -0.6, -2) },
+  uClickWorlds: {
+    value: Array.from({ length: CLICK_SLOTS }, () => new THREE.Vector3(0, -0.6, -2))
+  },
+  uClickTimes: { value: new Array(CLICK_SLOTS).fill(-100) }
 }
 
 cubeMat.onBeforeCompile = (shader) => {
   shader.uniforms.uTime = uniforms.uTime
-  shader.uniforms.uCursor = uniforms.uCursor
+  shader.uniforms.uMouseNdc = uniforms.uMouseNdc
+  shader.uniforms.uAspect = uniforms.uAspect
   shader.uniforms.uSigma = uniforms.uSigma
-  shader.uniforms.uRippleSpeed = uniforms.uRippleSpeed
-  shader.uniforms.uRippleFreq = uniforms.uRippleFreq
+  shader.uniforms.uCursorWorld = uniforms.uCursorWorld
+  shader.uniforms.uClickWorlds = uniforms.uClickWorlds
+  shader.uniforms.uClickTimes = uniforms.uClickTimes
+
+  // Screen-space glow: project each instance to NDC, measure 2D distance to
+  // the cursor, and use that as a Gaussian "lit-up" envelope. No traveling
+  // wave — cubes simply gather/glow around wherever the pointer is, regardless
+  // of depth (so sky cubes near the top of the screen react too).
   shader.vertexShader =
     `
     uniform float uTime;
-    uniform vec3 uCursor;
+    uniform vec2 uMouseNdc;
+    uniform float uAspect;
     uniform float uSigma;
-    uniform float uRippleSpeed;
-    uniform float uRippleFreq;
+    uniform vec3 uCursorWorld;
+    uniform vec3 uClickWorlds[4];
+    uniform float uClickTimes[4];
     attribute float aSeed;
-    varying float vLift;
-  ` + shader.vertexShader.replace(
-      '#include <begin_vertex>',
-      `
-      vec3 transformed = vec3(position);
-      vec4 worldPos = instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0);
-      vec3 pxyz = worldPos.xyz;
+    varying float vGlow;
+    ` + shader.vertexShader
+      .replace(
+        '#include <begin_vertex>',
+        `
+        vec3 transformed = vec3(position);
 
-      // Distance on the floor plane only — keeps ripples reading as concentric
-      // rings on the surface even for sky/sphere cubes.
-      vec2 toCursor = pxyz.xz - uCursor.xz;
-      float d = length(toCursor);
+        vec3 pxyz = (instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
 
-      // Gaussian envelope — wide and soft, fades the ripple far from cursor.
-      float env = exp(-(d*d) / (uSigma*uSigma));
+        // Project the instance center to clip space → NDC for screen-space envelope.
+        vec4 instClip = projectionMatrix * viewMatrix * vec4(pxyz, 1.0);
+        vec2 instNdc  = instClip.xy / max(instClip.w, 0.0001);
 
-      // Slow ambient swell so the field breathes when nothing's happening.
-      float baseWave = sin(uTime * 0.45 + aSeed * 6.2831 + pxyz.x * 0.22) * 0.05
-                     + sin(uTime * 0.30 + aSeed * 3.0    + pxyz.z * 0.16) * 0.035;
+        // Aspect-corrected screen distance so the glow stays circular.
+        vec2 toMouse = instNdc - uMouseNdc;
+        toMouse.x *= uAspect;
+        float screenD = length(toMouse);
 
-      // Outgoing traveling wave: phase = d*k - t*omega so crests march away
-      // from cursor. Two harmonics give a softer, water-like beat.
-      float phase  = d * uRippleFreq - uTime * uRippleSpeed * uRippleFreq;
-      float ripple = sin(phase) * 0.22
-                   + sin(phase * 0.5 - uTime * 0.6) * 0.10;
-      ripple *= env;
+        // Gaussian envelope in NDC; cubes behind the camera get nothing.
+        float inFront = step(0.0, instClip.w);
+        float env = exp(-(screenD * screenD) / (uSigma * uSigma)) * inFront;
 
-      float lift = baseWave + ripple;
+        // Ambient breathing so the field is never frozen.
+        float baseWave = sin(uTime * 0.45 + aSeed * 6.2831) * 0.05
+                       + sin(uTime * 0.30 + aSeed * 3.0)    * 0.035;
 
-      // Gentle radial nudge inward so cubes near the cursor lean toward the
-      // ring crest instead of jumping vertically.
-      vec2 radial = d > 0.0001 ? toCursor / d : vec2(0.0);
-      transformed.xz += radial * env * sin(phase) * 0.05;
-      transformed.y  += lift;
+        // Per-cube shimmer near cursor — visible movement, not just glow.
+        float pulse = sin(uTime * 1.8 + aSeed * 6.2831) * 0.12;
+        float worldLift = baseWave + env * (0.22 + pulse);
 
-      // Slight twist near the cursor — keeps the surface alive without spikes.
-      float rotAngle = env * sin(uTime * 0.6 + aSeed * 3.14) * 0.25;
-      mat2 rot = mat2(cos(rotAngle), -sin(rotAngle), sin(rotAngle), cos(rotAngle));
-      transformed.xz = rot * transformed.xz;
+        // GATHER: pull cubes inward in world XZ toward the cursor's floor
+        // projection, weighted by the screen-space envelope. Per-cube jitter
+        // (driven by aSeed + time) makes the swarm look alive instead of glassy.
+        vec2 toCursorXZ = uCursorWorld.xz - pxyz.xz;
+        vec2 jitter = vec2(
+          sin(uTime * 2.7 + aSeed * 12.5),
+          cos(uTime * 2.1 + aSeed * 7.3)
+        ) * 0.45;
+        vec2 gatherXZ = (toCursorXZ + jitter) * env * 0.22;
 
-      vLift = lift;
-    `
-    )
+        // CLICK BURST: per-cube smooth wave-arrival model.
+        // Instead of a thin ring shell sweeping past (which made each cube
+        // feel a brief blip), every cube computes its own arrival time based
+        // on distance, then plays a smooth ease-in + exponential decay curve.
+        // This gives a sustained, fluid outward motion — not a hard pulse.
+        // CLICK BURSTS — single uniform timeline, no per-cube wave arrival.
+        // All cubes move at the same instant (kills the layer-by-layer ring
+        // look) with a soft 1/(1+d²) distance falloff so far cubes still get
+        // a meaningful push. Three phases per click:
+        //   GATHER   0.00 → 0.45s   all cubes pull INWARD toward the click
+        //   SHOOT    0.40 → 1.6s   all cubes push OUTWARD (transient kick)
+        //   SETTLE   0.40s onward   permanent outward offset = HOLE that stays
+        float depthScale = smoothstep(0.4, 2.5, instClip.w);
+        float magJitter = 0.78 + sin(aSeed * 23.1) * 0.22;
+
+        vec2 burstPushXZ = vec2(0.0);
+        float burstLift  = 0.0;
+        float burstGlow  = 0.0;
+
+        for (int i = 0; i < 4; i++) {
+          float clickTime = uClickTimes[i];
+          vec3 clickWorld = uClickWorlds[i];
+          float burstAge = uTime - clickTime;
+          if (burstAge < 0.0) continue;
+
+          vec2 toClickXZ = pxyz.xz - clickWorld.xz;
+          float clickDist = length(toClickXZ);
+          vec2 outDir = clickDist > 0.0001 ? toClickXZ / clickDist : vec2(0.0);
+
+          // Soft, wide distance falloff so far cubes still react meaningfully.
+          // d=0 → 1.0, d=5 → 0.77, d=10 → 0.45, d=20 → 0.17
+          float falloff = 1.0 / (1.0 + clickDist * clickDist * 0.012);
+
+          // GATHER: pulls everything inward, peaks at ~0.18s, fades by ~0.45s
+          float gather = smoothstep(0.0, 0.18, burstAge)
+                       * (1.0 - smoothstep(0.30, 0.45, burstAge));
+
+          // SHOOT + SETTLE share an age, both starting after the gather peaks
+          float shootAge = burstAge - 0.38;
+          float shoot  = shootAge > 0.0
+            ? smoothstep(0.0, 0.20, shootAge) * exp(-shootAge * 0.85)
+            : 0.0;
+          float settle = shootAge > 0.0 ? smoothstep(0.0, 0.65, shootAge) : 0.0;
+
+          // Per-cube angular wobble + magnitude jitter — organic edges.
+          float wobble = sin(aSeed * 31.7) * 0.4;
+          vec2 chaosDir = vec2(cos(wobble), sin(wobble));
+          vec2 dirNoisy = normalize(outDir + chaosDir * 0.3);
+
+          float baseScale = falloff * magJitter * depthScale;
+
+          burstPushXZ += -outDir  * gather  * falloff * 0.55 * depthScale;
+          burstPushXZ +=  dirNoisy * shoot  * baseScale * 1.35;
+          burstPushXZ +=  dirNoisy * settle * baseScale * 0.55;
+
+          burstLift   += gather   * falloff * 0.14 * depthScale;
+          burstLift   += shoot    * baseScale * (0.35 + sin(aSeed * 17.0) * 0.18);
+          burstLift   += settle   * baseScale * 0.14;
+
+          burstGlow = max(burstGlow, max(gather * 0.45, shoot * 0.65) * falloff);
+        }
+
+        vGlow = max(env, burstGlow);
+        `
+      )
+      .replace(
+        '#include <project_vertex>',
+        `
+        vec4 mvPosition = vec4(transformed, 1.0);
+        #ifdef USE_INSTANCING
+          mvPosition = instanceMatrix * mvPosition;
+        #endif
+        // Apply all displacements in world space, after instance rotation.
+        mvPosition.y  += worldLift + burstLift;
+        mvPosition.xz += gatherXZ + burstPushXZ;
+        mvPosition = modelViewMatrix * mvPosition;
+        gl_Position = projectionMatrix * mvPosition;
+        `
+      )
+
   shader.fragmentShader =
     `
-    varying float vLift;
-  ` + shader.fragmentShader.replace(
+    varying float vGlow;
+    ` + shader.fragmentShader.replace(
       '#include <emissivemap_fragment>',
       `
       #include <emissivemap_fragment>
-      float glow = clamp(vLift * 2.0, 0.0, 1.0);
-      totalEmissiveRadiance += vec3(1.0, 0.32, 0.18) * glow * 0.5;
-      diffuseColor.rgb = mix(vec3(0.95, 0.55, 0.45), vec3(1.0, 0.42, 0.32), glow);
-    `
+      float g = clamp(vGlow, 0.0, 1.0);
+      totalEmissiveRadiance += vec3(1.0, 0.34, 0.18) * g * 0.45;
+      diffuseColor.rgb = mix(vec3(0.95, 0.55, 0.45), vec3(1.0, 0.50, 0.36), g * 0.6);
+      `
     )
 }
 
@@ -150,14 +242,13 @@ const cubeMesh = new THREE.InstancedMesh(cubeGeom, cubeMat, CUBE_COUNT)
 const seeds = new Float32Array(CUBE_COUNT)
 const dummy = new THREE.Object3D()
 
-// Four-pool distribution: dense floor · mid-air sphere · sky layer · scatter.
-// The sky layer is the new addition — larger, brighter cubes filling the top
-// half of the frame so the overhead area reads as part of the same world
-// instead of going dark.
+// Five-pool distribution: dense floor · core fill · mid-air sphere · sky · scatter.
+// The "core fill" pool plugs the empty pocket inside the spherical shell that
+// used to read as a dark hole right where the camera looks.
 for (let i = 0; i < CUBE_COUNT; i++) {
   let x, y, z, s
 
-  if (i < CUBE_COUNT * 0.40) {
+  if (i < CUBE_COUNT * 0.36) {
     // Dense floor grid
     const gridSize = 15
     const gi = i % (gridSize * gridSize)
@@ -167,7 +258,17 @@ for (let i = 0; i < CUBE_COUNT; i++) {
     y = -1.15 + Math.random() * 0.3
     z = gz * 14 + (Math.random() - 0.5) * 0.8 - 4
     s = 0.45 + Math.random() * 0.5
-  } else if (i < CUBE_COUNT * 0.65) {
+  } else if (i < CUBE_COUNT * 0.52) {
+    // Core fill — fills the inner sphere (r=0.6 → 3.5) the shell pool skipped.
+    // This is what removes the central "hole" in the field of view.
+    const phi = Math.random() * Math.PI * 2
+    const theta = Math.acos(1 - 2 * Math.random())
+    const r = 0.6 + Math.random() * 2.9
+    x = r * Math.sin(theta) * Math.cos(phi)
+    y = r * Math.sin(theta) * Math.sin(phi) - 0.2
+    z = r * Math.cos(theta) - 3.2
+    s = 0.35 + Math.random() * 0.5
+  } else if (i < CUBE_COUNT * 0.72) {
     // Floating spherical shell around the camera
     const phi = Math.random() * Math.PI * 2
     const theta = Math.acos(1 - 2 * Math.random())
@@ -176,7 +277,7 @@ for (let i = 0; i < CUBE_COUNT; i++) {
     y = r * Math.sin(theta) * Math.sin(phi) - 0.4
     z = r * Math.cos(theta) - 4
     s = 0.5 + Math.random() * 0.7
-  } else if (i < CUBE_COUNT * 0.90) {
+  } else if (i < CUBE_COUNT * 0.92) {
     // Sky layer — bigger cubes overhead, sparse but bright
     x = (Math.random() - 0.5) * 18
     y = 1.4 + Math.random() * 5.5
@@ -214,7 +315,7 @@ scene.add(cubeMesh)
 // Lower damping = ripple trails the pointer. ~0.06 looks like syrup;
 // 0.18 was near-instant.
 const mouse = { x: 0, y: 0, tx: 0, ty: 0 }
-const DAMPING = 0.06
+const DAMPING = 0.18
 
 let lastPointerAt = 0
 const POINTER_PRIORITY_MS = 1500
@@ -289,38 +390,73 @@ function resize() {
   bloom.setSize(w, h)
   camera.aspect = w / h
   camera.updateProjectionMatrix()
+  uniforms.uAspect.value = w / h
 }
 resize()
 window.addEventListener('resize', resize)
 
 // ---------- Animate ----------
 const clock = new THREE.Clock()
-const cursorWorld = new THREE.Vector3()
-const ndcVec = new THREE.Vector3()
-
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+const FLOOR_Y = -0.6
+const tmpNdc = new THREE.Vector3()
+const tmpDir = new THREE.Vector3()
+const tmpWorld = new THREE.Vector3()
+
+// Ray-cast NDC → floor plane, with safety clamps for when the cursor is
+// above the camera horizon (which would otherwise blow up the projection).
+function ndcToFloor(nx, ny, out) {
+  tmpNdc.set(nx, ny, 0.5).unproject(camera)
+  tmpDir.copy(tmpNdc).sub(camera.position).normalize()
+  const safeDirY = Math.min(tmpDir.y, -0.05)
+  const tHit = Math.min((FLOOR_Y - camera.position.y) / safeDirY, 18)
+  out.copy(camera.position).addScaledVector(tmpDir, tHit)
+  out.x = Math.max(-12, Math.min(12, out.x))
+  out.y = FLOOR_Y
+  out.z = Math.max(-16, Math.min(5, out.z))
+  return out
+}
+
+// Click → outward burst, ring-buffered into one of CLICK_SLOTS so successive
+// clicks each leave their own persistent hole.
+let nextClickSlot = 0
+function fireBurst(clientX, clientY) {
+  const nx = (clientX / window.innerWidth) * 2 - 1
+  const ny = -((clientY / window.innerHeight) * 2 - 1)
+  ndcToFloor(nx, ny, tmpWorld)
+  const slot = nextClickSlot
+  uniforms.uClickWorlds.value[slot].copy(tmpWorld)
+  uniforms.uClickTimes.value[slot] = clock.getElapsedTime()
+  nextClickSlot = (nextClickSlot + 1) % CLICK_SLOTS
+}
+window.addEventListener('pointerdown', (e) => {
+  // Skip clicks on UI elements (buttons, modal, etc).
+  if (e.target && e.target.closest('button, a, input, select, [role="dialog"]')) return
+  fireBurst(e.clientX, e.clientY)
+}, { passive: true })
 
 function animate() {
   const t = clock.getElapsedTime()
   uniforms.uTime.value = t
 
-  // Smooth cursor towards target
   mouse.x += (mouse.tx - mouse.x) * DAMPING
   mouse.y += (mouse.ty - mouse.y) * DAMPING
 
-  // Project NDC cursor to a fixed plane in front of the camera
-  ndcVec.set(mouse.x, mouse.y, 0.5).unproject(camera)
-  const dir = ndcVec.sub(camera.position).normalize()
-  const planeY = -0.6
-  const tHit = (planeY - camera.position.y) / dir.y
-  cursorWorld.copy(camera.position).addScaledVector(dir, tHit)
-  uniforms.uCursor.value.copy(cursorWorld)
+  uniforms.uMouseNdc.value.set(mouse.x, mouse.y)
+  ndcToFloor(mouse.x, mouse.y, uniforms.uCursorWorld.value)
 
-  // Subtle ambient camera drift so the field never feels frozen
+  // Camera both translates AND rotates with the cursor so the world feels
+  // like it's actually turning, not just panning a flat backdrop.
   if (!reduced) {
-    camera.position.x = mouse.x * 0.4
-    camera.position.y = 0.55 + mouse.y * 0.25 + Math.sin(t * 0.3) * 0.04
-    camera.lookAt(0, -0.2, -2)
+    camera.position.x = mouse.x * 0.9 + Math.sin(t * 0.27) * 0.05
+    camera.position.y = 0.55 + mouse.y * 0.45 + Math.sin(t * 0.3) * 0.05
+    camera.position.z = 4.2 + mouse.y * 0.25
+    // LookAt target leans the same direction as the cursor — exaggerates
+    // the parallax so foreground vs background separate visibly.
+    const lookX = mouse.x * 1.2
+    const lookY = -0.2 + mouse.y * 0.55
+    camera.lookAt(lookX, lookY, -2)
   }
 
   composer.render()

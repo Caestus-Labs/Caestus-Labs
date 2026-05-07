@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1024" height="1024">
+  <rect width="24" height="24" fill="#15130f"></rect>
+  <title>Caestus Labs — Mark</title>
+
+  <rect x="5" y="5" width="14" height="2" fill="#f0ece4"></rect>
+  <rect x="5" y="5" width="2" height="5" fill="#f0ece4"></rect>
+  <rect x="5" y="11" width="7" height="2" fill="#f0ece4"></rect>
+  <rect x="5" y="17" width="14" height="2" fill="#f0ece4"></rect>
+  <rect x="5" y="14" width="2" height="5" fill="#f0ece4"></rect>
+
+</svg>
