@@ -2,7 +2,7 @@
 
 A minimal, text-only company website at https://caestuslabs.com.
 
-The homepage contains the company name, "Simulating Reality", and a contact link to andrew@jiang.now. Its HTML and CSS are self-contained in `index.html`; it needs no JavaScript, external fonts, or build step.
+The homepage contains the company name, "Simulating Reality", and a contact link to contact@caestuslabs.com. Its HTML and CSS are self-contained in `index.html`; it needs no JavaScript, external fonts, or build step.
 
 ## Local preview
 
