@@ -1,113 +1,64 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Caestus Labs — Coming Soon</title>
-<meta name="description" content="Caestus Labs is making VR you can feel. Sign up for early access.">
-<link rel="icon" type="image/svg+xml" href="/assets/logo/caestus-mark-favicon.svg">
-<link rel="alternate icon" href="/favicon.ico">
-<link rel="apple-touch-icon" href="/assets/logo/caestus-mark-black.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800&family=Inter:wght@300&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/coming-soon.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Caestus Labs — Simulating Reality</title>
+  <meta name="description" content="Caestus Labs. Simulating Reality. Contact andrew@jiang.now.">
+  <link rel="icon" type="image/svg+xml" href="/assets/logo/caestus-mark-favicon.svg">
+  <link rel="alternate icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/logo/caestus-mark-black.svg">
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #111;
+      background: #fff;
+    }
+
+    body {
+      margin: 0;
+      padding: clamp(24px, 5vw, 64px);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    h1 {
+      margin: 0 0 24px;
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .contact {
+      margin-top: 24px;
+    }
+
+    a {
+      color: inherit;
+      text-underline-offset: 3px;
+      overflow-wrap: anywhere;
+    }
+
+    a:hover {
+      text-decoration: none;
+    }
+
+    a:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 4px;
+    }
+  </style>
 </head>
 <body>
-  <canvas id="cubes" aria-hidden="true"></canvas>
-  <div class="vignette" aria-hidden="true"></div>
-
-  <header class="topbar">
-    <a class="brand" href="/" aria-label="Caestus Labs">
-      <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <rect x="5" y="5" width="14" height="2"/>
-        <rect x="5" y="5" width="2" height="5"/>
-        <rect x="5" y="11" width="7" height="2"/>
-        <rect x="5" y="17" width="14" height="2"/>
-        <rect x="5" y="14" width="2" height="5"/>
-      </svg>
-      <span class="brand-word">CAESTUS</span>
-      <span class="brand-sub">LABS</span>
-    </a>
-    <div class="status"><span class="dot"></span>2026</div>
-  </header>
-
   <main>
-    <section class="hero">
-      <p class="eyebrow">Coming Soon</p>
-      <h1>Making <em>VR</em><br>you can <span class="accent">feel.</span></h1>
-
-      <button type="button" class="cta" id="signupOpen" aria-haspopup="dialog" aria-controls="signupModal">
-        <span class="label">Sign Up</span>
-        <span class="arrow" aria-hidden="true">→</span>
-      </button>
-
-      <p class="click-hint" aria-hidden="true">
-        <span class="hint-mark">✦</span>
-        <span>click anywhere to disturb the field</span>
-      </p>
-    </section>
+    <h1>Caestus Labs</h1>
+    <p>Simulating Reality</p>
+    <p class="contact"><a href="mailto:andrew@jiang.now">andrew@jiang.now</a></p>
   </main>
-
-  <footer class="foot">
-    <span>Caestus Labs · 2026</span>
-    <a href="mailto:hello@caestuslabs.com">hello@caestuslabs.com</a>
-  </footer>
-
-  <!-- Sign-up modal -->
-  <div class="modal" id="signupModal" role="dialog" aria-modal="true" aria-labelledby="signupTitle" hidden>
-    <div class="modal-backdrop" data-close></div>
-    <div class="modal-card" role="document">
-      <button class="modal-close" type="button" aria-label="Close" data-close>✕</button>
-      <p class="eyebrow">Early Access</p>
-      <h2 id="signupTitle">Get on the list.</h2>
-      <p class="modal-sub">We'll email when developer kits open up.</p>
-
-      <form class="interest" id="interestForm" novalidate>
-        <div class="field">
-          <label for="email" class="visually-hidden">Email</label>
-          <input id="email" name="email" type="email" required placeholder="you@company.com" autocomplete="email">
-        </div>
-        <div class="field name">
-          <label for="name" class="visually-hidden">Name</label>
-          <input id="name" name="name" type="text" required placeholder="Your name" maxlength="100" autocomplete="name">
-        </div>
-        <div class="field select">
-          <label for="use_case" class="visually-hidden">Interest</label>
-          <select id="use_case" name="use_case" required>
-            <option value="" disabled selected>I'm interested as…</option>
-            <option value="training">Training &amp; simulation</option>
-            <option value="medical">Medical &amp; surgical</option>
-            <option value="industrial">Industrial &amp; aerospace</option>
-            <option value="gaming">Gaming &amp; entertainment</option>
-            <option value="research">Research</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        <button type="submit" class="submit" id="submitBtn">
-          <span class="label">Notify me</span>
-          <span class="arrow" aria-hidden="true">→</span>
-        </button>
-        <p class="status-msg" id="formStatus" role="status" aria-live="polite"></p>
-      </form>
-    </div>
-  </div>
-
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-      }
-    }
-  </script>
-  <script>
-    // Supabase publishable anon key — safe to ship; RLS on `contacts` gates writes.
-    window.SUPABASE_URL = 'https://evpoxdrluvihryvqhraz.supabase.co'
-    window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2cG94ZHJsdXZpaHJ5dnFocmF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyOTAwMjMsImV4cCI6MjA5Mjg2NjAyM30.H2dU0ZvzgtWTA1ZC0lzczDb7vd6fBH4vJQMj8pTJss4'
-  </script>
-  <script type="module" src="/js/cubes.js"></script>
-  <script type="module" src="/js/interest-form.js"></script>
-  <script src="/js/modal.js" defer></script>
 </body>
 </html>
